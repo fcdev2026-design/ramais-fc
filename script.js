@@ -3,15 +3,15 @@ const SUPABASE_URL = 'https://qezbrxgmwjhsezaqowcj.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_xjcAgPhqKHoVvOZaXn_mEA_2bLG3Kl4';
 const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// Senhas Ofuscadas (Digite APPADM e FC2026 normalmente quando solicitado)
+// Senhas Ofuscadas (APPADM e FC2026)
 const _0xaf2 = ['\x41\x50\x50\x41\x44\x4d', '\x46\x43\x32\x30\x32\x36', '\x66\x63\x5f\x61\x75\x74\x6f\x72\x69\x7a\x61\x64\x6f'];
-const SENHA_MESTRA = _0xaf2[0]; 
-const SENHA_ACESSO_SITE = _0xaf2[1];
+const SENHA_MESTRA = _0xaf2[0]; // APPADM
+const SENHA_ACESSO_SITE = _0xaf2[1]; // FC2026
 
 let dadosRamais = [];
 const camposIds = ['n-nome', 'n-setor', 'n-ramal', 'n-contato'];
 
-// 1. TRAVA DE SEGURANÇA PARA DEPLOY PÚBLICO (GITHUB)
+// 1. TRAVA DE SEGURANÇA PARA ACESSO AO SITE
 (function validarAcesso() {
     if (localStorage.getItem(_0xaf2[2]) !== "true") {
         const senha = prompt("Acesso Restrito Ferreira Costa. Digite a senha da unidade:");
@@ -106,7 +106,10 @@ function renderTable(filtro = "") {
     });
 }
 
+// FUNÇÃO SALVAR AJUSTADA COM SENHA APPADM
 async function save() {
+    if(prompt("🔒 Confirme a senha administrativa (APPADM) para salvar:") !== SENHA_MESTRA) return alert("Operação cancelada.");
+
     const nome = document.getElementById('n-nome').value.toUpperCase().trim();
     const setor = document.getElementById('n-setor').value.toUpperCase().trim();
     const ramal = document.getElementById('n-ramal').value.trim();
@@ -163,7 +166,10 @@ function editItem(id) {
     switchView('cadastro', true);
 }
 
+// FUNÇÃO NOVO RAMAL AJUSTADA COM SENHA APPADM
 function prepareAdd() {
+    if(prompt("🔒 Senha administrativa necessária para CADASTRAR NOVO:") !== SENHA_MESTRA) return alert("Acesso negado.");
+
     document.getElementById('form-title').innerText = "Cadastrar Novo";
     document.getElementById('edit-id').value = "";
     camposIds.forEach(id => {
@@ -190,4 +196,11 @@ function filtrar() { renderTable(document.getElementById('search').value); }
 function logout() {
     localStorage.removeItem(_0xaf2[2]);
     location.reload();
+}
+
+function aplicarMascaraTelefone(input) {
+    let v = input.value.replace(/\D/g, '');
+    v = v.replace(/^(\d{2})(\d)/g, "($1) $2");
+    v = v.replace(/(\d)(\d{4})$/, "$1-$2");
+    input.value = v;
 }
