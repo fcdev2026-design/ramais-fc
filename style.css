@@ -6,7 +6,7 @@
     --danger: #ef4444;
     --success: #22c55e;
     --bg: #f1f5f9;
-    --card-bg: #ffffff;
+    --card-bg: #e0e0e0;
     --text-main: #1e293b;
     --border: #e2e8f0;
     --text-muted: #64748b;
@@ -69,7 +69,7 @@ body {
     width: 94%; max-width: 800px; margin: -60px auto 40px;
     background: var(--card-bg); border-radius: 24px;
     box-shadow: var(--shadow); position: relative; border: 1px solid rgba(255,255,255,0.8);
-    min-height: 400px;
+    min-height: 90px;
 }
 
 .view-section { display: none; padding: 35px; }
@@ -81,11 +81,11 @@ body {
 }
 
 /* Tabelas e Busca */
-.search-container { position: sticky; top: 0; background: white; z-index: 10; padding-bottom: 20px; }
+.search-container { position: sticky; top: 0; background:#e0e0e0; z-index: 10; padding-bottom: 20px; }
 #search { 
     width: 100%; padding: 18px 25px; border: 2px solid var(--border); 
     border-radius: 18px; font-size: 16px; box-sizing: border-box;
-    transition: 0.3s; background: #f8fafc;
+    transition: 0.3s; background: #f3f5f7;
 }
 
 table { width: 100%; border-collapse: collapse; }
@@ -93,7 +93,7 @@ table { width: 100%; border-collapse: collapse; }
     padding: 25px 10px 10px; font-weight: 800; color: var(--fc-blue); 
     font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase;
 }
-.item-row td { padding: 16px 10px; border-bottom: 1px solid #f1f5f9; }
+.item-row td { padding: 16px 10px; border-bottom: 1px solid #bdbdbd; }
 
 .ramal-badge { 
     background: var(--fc-yellow); color: var(--fc-blue-dark); 
@@ -117,7 +117,7 @@ table { width: 100%; border-collapse: collapse; }
 .modal-content { background: white; padding: 40px; border-radius: 28px; max-width: 500px; width: 90%; position: relative; }
 .emergency-box { background: #fef2f2; padding: 20px; border-radius: 16px; border: 1px solid #fee2e2; margin: 20px 0; }
 
-footer { text-align: center; padding: 40px; font-size: 12px; color: var(--text-muted); }
+footer { text-align: center; padding: 40px; font-size: 14px; color: var(--text-muted); }
 
 @media (max-width: 600px) {
     .view-section { padding: 20px; }

@@ -92,7 +92,7 @@ function renderTable(filtro = "") {
             <tr class="item-row">
                 <td>
                     <div style="font-weight:700; font-size:15px;">${p.nome}</div>
-                    <div style="font-size:11px; color:var(--text-muted);">${p.setor}</div>
+                    <div style="font-size:10px; color:black;">${p.setor}</div>
                     <div class="actions">
                         <button class="btn-action btn-edit" onclick="editItem('${p.id}')">Editar</button>
                         <button class="btn-action btn-delete" onclick="deleteItem('${p.id}')">Excluir</button>
