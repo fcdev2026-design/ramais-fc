@@ -19,9 +19,10 @@ const camposIds = ['n-nome', 'n-setor', 'n-ramal', 'n-contato'];
             localStorage.setItem(_0xaf2[2], "true");
         } else {
             alert("Senha incorreta!");
-            document.body.innerHTML = `<div style="display:flex; justify-content:center; align-items:center; height:100vh; font-family:sans-serif; color:#666; text-align:center;">
-                <div><h1>🚫 Acesso Negado</h1><p>Este sistema é de uso interno exclusivo.</p></div>
-            </div>`;
+            document.body.innerHTML = `
+                <div style="display:flex; justify-content:center; align-items:center; height:100vh; font-family:sans-serif; color:#666; text-align:center;">
+                    <div><h1>🚫 Acesso Negado</h1><p>Este sistema é de uso interno exclusivo.</p></div>
+                </div>`;
             throw new Error("Acesso negado");
         }
     }
@@ -43,8 +44,9 @@ async function fetchData() {
     if (error) {
         console.error('Erro ao buscar dados:', error);
     } else {
-        dadosRamais = data;
-        renderTable(document.getElementById('search').value);
+        dadosRamais = data || [];
+        // Renderiza tudo inicialmente
+        renderTable("");
     }
 }
 
@@ -70,35 +72,44 @@ function renderTable(filtro = "") {
     if (!corpo) return;
     
     corpo.innerHTML = "";
-    if (filtro.trim() === "") return;
+    const termo = filtro.toLowerCase().trim();
 
-    const termo = filtro.toLowerCase();
-    const dadosFiltrados = dadosRamais.filter(item => 
-        (item.nome && item.nome.toLowerCase().includes(termo)) || 
-        (item.setor && item.setor.toLowerCase().includes(termo)) || 
-        (item.ramal && item.ramal.includes(termo))
-    );
-    
-    const grupos = {};
-    dadosFiltrados.forEach(item => {
-        if(!grupos[item.setor]) grupos[item.setor] = [];
-        grupos[item.setor].push(item);
+    // Filtra os dados com base no termo (se vazio, retorna todos)
+    const dadosFiltrados = dadosRamais.filter(item => {
+        const nome = (item.nome || "").toLowerCase();
+        const setor = (item.setor || "").toLowerCase();
+        const ramal = String(item.ramal || "").toLowerCase();
+        return nome.includes(termo) || setor.includes(termo) || ramal.includes(termo);
     });
 
-    Object.keys(grupos).forEach(setor => {
+    if (dadosFiltrados.length === 0) {
+        corpo.innerHTML = `<tr><td colspan="2" style="text-align:center; padding:20px; color:#999;">Nenhum resultado encontrado.</td></tr>`;
+        return;
+    }
+
+    // Agrupa por setor
+    const grupos = {};
+    dadosFiltrados.forEach(item => {
+        const s = item.setor || "OUTROS";
+        if(!grupos[s]) grupos[s] = [];
+        grupos[s].push(item);
+    });
+
+    // Gera o HTML
+    Object.keys(grupos).sort().forEach(setor => {
         corpo.innerHTML += `<tr class="row-setor"><td colspan="2">${setor}</td></tr>`;
         grupos[setor].forEach(p => {
             corpo.innerHTML += `
             <tr class="item-row">
                 <td>
                     <div style="font-weight:700; font-size:15px;">${p.nome}</div>
-                    <div style="font-size:10px; color:black;">${p.setor}</div>
+                    <div style="font-size:11px; color:#555;">${p.setor} ${p.contato ? ' | ' + p.contato : ''}</div>
                     <div class="actions">
                         <button class="btn-action btn-edit" onclick="editItem('${p.id}')">Editar</button>
                         <button class="btn-action btn-delete" onclick="deleteItem('${p.id}')">Excluir</button>
                     </div>
                 </td>
-                <td style="text-align:right;">
+                <td style="text-align:right; vertical-align:middle;">
                     <span class="ramal-badge">📞 ${p.ramal}</span>
                 </td>
             </tr>`;
@@ -106,9 +117,14 @@ function renderTable(filtro = "") {
     });
 }
 
-// FUNÇÃO SALVAR AJUSTADA COM SENHA APPADM
+// Chamar a filtragem ao digitar
+function filtrar() {
+    const termo = document.getElementById('search').value;
+    renderTable(termo);
+}
+
 async function save() {
-    if(prompt("🔒 Confirme a senha administrativa (APPADM) para salvar:") !== SENHA_MESTRA) return alert("Operação cancelada.");
+    if(prompt("🔒 Confirme a senha administrativa (APPADM):") !== SENHA_MESTRA) return alert("Senha incorreta.");
 
     const nome = document.getElementById('n-nome').value.toUpperCase().trim();
     const setor = document.getElementById('n-setor').value.toUpperCase().trim();
@@ -137,7 +153,7 @@ async function save() {
 }
 
 async function deleteItem(id) {
-    if(prompt("🔒 Senha administrativa necessária para EXCLUIR:") !== SENHA_MESTRA) return alert("Ação cancelada: Senha incorreta.");
+    if(prompt("🔒 Senha administrativa para EXCLUIR:") !== SENHA_MESTRA) return alert("Ação negada.");
     
     if(confirm("Deseja excluir este contato permanentemente?")) {
         const { error } = await _supabase.from('ramais').delete().eq('id', id);
@@ -151,7 +167,7 @@ async function deleteItem(id) {
 }
 
 function editItem(id) {
-    if(prompt("🔒 Senha administrativa necessária para EDITAR:") !== SENHA_MESTRA) return alert("Ação cancelada: Senha incorreta.");
+    if(prompt("🔒 Senha administrativa para EDITAR:") !== SENHA_MESTRA) return alert("Ação negada.");
     
     const item = dadosRamais.find(i => i.id == id);
     if(!item) return;
@@ -166,9 +182,8 @@ function editItem(id) {
     switchView('cadastro', true);
 }
 
-// FUNÇÃO NOVO RAMAL AJUSTADA COM SENHA APPADM
 function prepareAdd() {
-    if(prompt("🔒 Senha administrativa necessária para CADASTRAR NOVO:") !== SENHA_MESTRA) return alert("Acesso negado.");
+    if(prompt("🔒 Senha administrativa para NOVO:") !== SENHA_MESTRA) return alert("Ação negada.");
 
     document.getElementById('form-title').innerText = "Cadastrar Novo";
     document.getElementById('edit-id').value = "";
@@ -180,8 +195,10 @@ function prepareAdd() {
 }
 
 function toggleMenu() {
-    document.getElementById('sidebar').classList.toggle('active');
-    document.getElementById('overlay').classList.toggle('active');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+    if(sidebar) sidebar.classList.toggle('active');
+    if(overlay) overlay.classList.toggle('active');
 }
 
 function switchView(view, skipMenu) {
@@ -191,11 +208,9 @@ function switchView(view, skipMenu) {
     if(!skipMenu) toggleMenu();
 }
 
-function filtrar() { renderTable(document.getElementById('search').value); }
-
-function logout() {
-    localStorage.removeItem(_0xaf2[2]);
-    location.reload();
+function toggleModal(show) {
+    const modal = document.getElementById('modal');
+    if(modal) modal.style.display = show ? 'flex' : 'none';
 }
 
 function aplicarMascaraTelefone(input) {
@@ -203,4 +218,9 @@ function aplicarMascaraTelefone(input) {
     v = v.replace(/^(\d{2})(\d)/g, "($1) $2");
     v = v.replace(/(\d)(\d{4})$/, "$1-$2");
     input.value = v;
+}
+
+function logout() {
+    localStorage.removeItem(_0xaf2[2]);
+    location.reload();
 }
