@@ -123,3 +123,63 @@ footer { text-align: center; padding: 40px; font-size: 14px; color: var(--text-m
     .view-section { padding: 20px; }
     .container { margin-top: -50px; }
 }
+/* --- Estilos da Seção de Ônibus --- */
+.container-transporte { 
+    background: #fff; 
+    border-radius: 12px; 
+    overflow: hidden; 
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    margin-top: 15px;
+}
+
+.header-bus { 
+    background: #0056b3; 
+    padding: 20px; 
+    text-align: center; 
+}
+
+.info-bus { 
+    padding: 15px; 
+    background: #f8f9fa; 
+    border-bottom: 1px solid #eee; 
+    font-size: 13px; 
+    text-align: center;
+    color: #666;
+}
+
+.tabela-bus { 
+    width: 100%; 
+    border-collapse: collapse; 
+}
+
+.tabela-bus th { 
+    background: #f1f1f1; 
+    color: #333; 
+    font-size: 12px; 
+    text-transform: uppercase; 
+    letter-spacing: 1px;
+    padding: 12px;
+}
+
+.tabela-bus td { 
+    padding: 12px; 
+    border-bottom: 1px solid #f9f9f9; 
+    text-align: center; 
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.intervalo-bus { 
+    background: #fff3cd !important; 
+    color: #856404 !important; 
+    font-size: 12px !important;
+}
+
+/* Ajuste para o botão voltar não ficar colado */
+#view-horarios .btn-close-view {
+    position: relative;
+    top: 0;
+    right: 0;
+    margin-bottom: 15px;
+    display: block;
+}
