@@ -197,15 +197,27 @@ function prepareAdd() {
 function toggleMenu() {
     const sidebar = document.getElementById('sidebar');
     const overlay = document.getElementById('overlay');
-    if(sidebar) sidebar.classList.toggle('active');
-    if(overlay) overlay.classList.toggle('active');
+    
+    // Verifica se os elementos existem antes de mudar a classe
+    if (sidebar && overlay) {
+        sidebar.classList.toggle('active');
+        overlay.classList.toggle('active');
+    }
 }
 
 function switchView(view, skipMenu) {
+    // Esconde todas as views
     document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+    
+    // Mostra a view clicada (ex: view-horarios)
     const target = document.getElementById('view-' + view);
     if(target) target.classList.add('active');
+    
+    // Se não for o botão de fechar (X), ele fecha o menu lateral automaticamente
     if(!skipMenu) toggleMenu();
+    
+    // Rola para o topo da página ao mudar de visão
+    window.scrollTo(0,0);
 }
 
 function toggleModal(show) {
