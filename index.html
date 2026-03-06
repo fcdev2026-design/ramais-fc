@@ -14,130 +14,211 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-    <marquee behavior="scroll" direction="left" style="background: #f4f4f4; color: #666; padding: 5px 0; font-size: 13px; border-bottom: 1px solid #ddd; display: block;">
-        📢 Informativo: Confira os novos **Horários do Ônibus Translado FC** no menu lateral 🚌
+    <div id="alerta-onibus" style="
+    display: none; 
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    /* Ajuste: O valor máximo deve ser maior que o mínimo. Ajustei para o teto de 40px que você definiu. */
+    height: clamp(35px, 6vh, 40px); 
+    background-color: #09be18; 
+    color: #000000; 
+    
+    /* Centralização precisa */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    font-weight: 800; 
+    z-index: 9999; 
+    border-bottom: 2px solid #000;
+    box-sizing: border-box;
+    overflow: hidden;
+">
+    <marquee scrollamount="10" behavior="scroll" direction="left" style="width: 100%; display: flex; align-items: center;">
+        <span id="texto-alerta" style="
+            /* Ajuste: Fonte entre 16px e 20px para caber na altura de 40px sem cortar */
+            font-size: clamp(14px, 4vw, 20px); 
+            white-space: nowrap;
+            text-transform: uppercase;
+            line-height: 1;
+            display: inline-block;
+            padding-top: 2px; /* Ajuste fino de alinhamento vertical */
+        "></span>
     </marquee>
+</div>
+    <span id="texto-alerta"></span>
+</div>
+    <div class="fixed-top-container">
+        <div id="clima-container" class="weather-bar">
+            <span id="weather-info">🌤️ Recife agora: Carregando...</span>
+        </div>
+        <header class="header-brand">
+            <div class="brand-name">
+                <img src="https://d2urakutajlof6.cloudfront.net/logo/logo_fc.svg" alt="Ferreira Costa">
+                <span>GUIA DE RAMAIS</span>
+            </div>
+            <button class="menu-icon" onclick="toggleMenu()">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </button>
+        </header>
+        <div class="marquee-info">
+            <marquee behavior="scroll" direction="left">
+                🚌 📢 Informativo: Confira os novos **Horários do Ônibus Translado FC** no menu lateral 
+            </marquee>
+        </div>
+    </div>
 
-    <button class="menu-icon" onclick="toggleMenu()">☰</button>
     <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
-
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-item" onclick="switchView('consulta')">🔍 Consultar</div>
+    
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">MENU</div>
+        <div class="sidebar-item" onclick="switchView('consulta')">🔍 Consultar Ramais</div>
         <div class="sidebar-item" onclick="prepareAdd()">➕ Novo Ramal</div>
-        <div class="sidebar-item" onclick="switchView('horarios')">🚌 Horário do Ônibus</div>
+        <div class="sidebar-item" onclick="switchView('horarios')">🚌 Horários Ônibus</div>
+        <div class="sidebar-item alert-item" onclick="toggleModal(true); toggleMenu()">🚨 ACIDENTE</div>
         
-        <div class="sidebar-item" style="color: #ff8e8e; margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;" onclick="toggleModal(true)">🚨 ACIDENTE</div>
-        <div class="sidebar-item" style="color: #ccc; font-size: 12px; margin-top: 10px;" onclick="logout()">🚪 Sair</div>
-    </div>
-
-    <div class="header-brand">
-        <div class="brand-name">
-            <img src="https://d2urakutajlof6.cloudfront.net/logo/logo_fc.svg" alt="Ferreira Costa">
-            <span>Guia de Ramais</span>
-        </div>
-    </div>
-
-    <div class="container">
-        <div id="view-consulta" class="view-section active">
-            <div class="search-container">
-                <input type="text" id="search" onkeyup="filtrar()" placeholder="Procure por nome ou setor...">
+        <div class="mp-container">
+            <div class="mp-info">
+                <span id="mp-now-playing">Selecione uma música</span>
             </div>
-            <table>
-                <tbody id="corpoTabela"></tbody>
-            </table>
-        </div>
-
-        <div id="view-cadastro" class="view-section">
-            <button class="btn-close-view" onclick="switchView('consulta', true)">&times;</button>
-            <h2 id="form-title">Cadastro</h2>
-            <input type="hidden" id="edit-id"> 
-            <div class="form-group">
-                <label>NOME COMPLETO</label>
-                <input type="text" id="n-nome" placeholder="Ex: JOÃO SILVA">
-            </div>
-            <div class="form-group">
-                <label>SETOR</label>
-                <input type="text" id="n-setor" placeholder="Ex: VENDAS">
-            </div>
-            <div class="form-group">
-                <label>CELULAR (OPCIONAL)</label>
-                <input type="text" id="n-contato" maxlength="15" placeholder="(00) 00000-0000" oninput="aplicarMascaraTelefone(this)">
-            </div>
-            <div class="form-group">
-                <label>RAMAL</label>
-                <input type="text" id="n-ramal" placeholder="Ex: 8000">
-            </div>
-            <button class="btn-save" onclick="save()">SINCRONIZAR COM BANCO</button>
-        </div>
-
-        <div id="view-horarios" class="view-section">
-            <button class="btn-close-view" onclick="switchView('consulta', true)" style="font-size: 14px; width: auto; padding: 5px 15px; margin-bottom: 10px;">← VOLTAR</button>
-            
-            <div class="container-transporte">
-                <header class="header-bus" style="background: #0056b3; padding: 15px; text-align: center;">
-                    <h2 style="margin:0; color: white; font-size: 18px;">Horários Ônibus Translado</h2>
-                </header>
-                
-                <div class="info-bus" style="padding: 10px; background: #f9f9f9; text-align: center; font-size: 13px; border-bottom: 1px solid #eee;">
-                    <strong>Frequência:</strong> A cada 20 min<br>
-                    <strong>Intervalos:</strong> 13h às 14h | 20h às 21h
+            <div class="mp-controls">
+                <button onclick="mpStop()">⏹️</button>
+                <button id="mp-play-pause" onclick="mpToggle()">▶️</button>
+                <div class="mp-volume-wrapper">
+                    <input type="range" id="mp-volume" min="0" max="1" step="0.1" value="0.5" oninput="mpSetVolume(this.value)">
                 </div>
+            </div>
+            <div class="mp-tabs">
+                <button class="mp-tab-btn active" onclick="mpFilter('todos')">Todos</button>
+                <button class="mp-tab-btn" onclick="mpFilter('relax')">Relax</button>
+                <button class="mp-tab-btn" onclick="mpFilter('foco')">Foco</button>
+            </div>
+            <div class="mp-playlist" id="mp-list">
+                </div>
+            <audio id="mainAudioPlayer"></audio>
+        </div>
 
-                <table class="tabela-bus" style="width: 100%; border-collapse: collapse;">
+        <div class="sidebar-footer">
+            <button class="logout-btn" onclick="logout()">🚪 Sair do Sistema</button>
+        </div>
+    </nav>
+
+    <main class="container">
+        <section id="view-consulta" class="view-section active">
+            <div class="search-container">
+                <input type="text" id="search" onkeyup="filtrar()" 
+                       placeholder="Pesquisar nome ou setor..." 
+                       autocomplete="off">
+            </div>
+            <div class="ramais-list">
+                <table class="table-ramais">
+                    <tbody id="corpoTabela"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="view-horarios" class="view-section">
+            <div class="sticky-header-view">
+                <button class="btn-back" onclick="switchView('consulta', true)">← Voltar</button>
+                <h2 class="section-title">🚌 Ônibus Translado</h2>
+            </div>
+            <div class="table-bus-wrapper">
+                <table class="table-bus">
                     <thead>
-                        <tr style="background: #eee;">
-                            <th style="padding: 10px;">Saída Estac.</th>
-                            <th style="padding: 10px;">Saída Loja</th>
+                        <tr>
+                            <th>Saída Estac.</th>
+                            <th>Saída Loja</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">7h20</td><td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">14h10</td></tr>
-                        <tr><td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">7h35</td><td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">14h30</td></tr>
-                        <tr><td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">7h50</td><td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">14h50</td></tr>
-                        <tr><td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">8h05</td><td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">15h10</td></tr>
-                        <tr><td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">8h20</td><td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">15h30</td></tr>
-                        <tr><td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">8h35</td><td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">15h50</td></tr>
-                        <tr><td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">8h50</td><td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">16h10</td></tr>
-                        <tr><td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">9h05</td><td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">16h30</td></tr>
-                        <tr><td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">9h20</td><td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">16h50</td></tr>
-                        <tr><td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">9h35</td><td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">17h10</td></tr>
-                        <tr><td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">9h50</td><td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">17h30</td></tr>
-                        <tr><td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">10h05</td><td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">17h50</td></tr>
-                        <tr><td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">10h20</td><td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">18h10</td></tr>
-                        <tr><td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">10h35</td><td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">18h30</td></tr>
-                        <tr><td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">10h50</td><td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">18h50</td></tr>
-                        <tr><td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">11h05</td><td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">19h10</td></tr>
-                        <tr><td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">11h20</td><td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">19h30</td></tr>
-                        <tr><td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">11h35</td><td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">19h50</td></tr>
-                        <tr><td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">11h50</td><td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center; background: #fff3cd; color: #856404;">Intervalo (20h-21h)</td></tr>
-                        <tr><td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">12h05</td><td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">21h10</td></tr>
-                        <tr><td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">12h20</td><td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">21h30</td></tr>
-                        <tr><td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">12h35</td><td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">21h50</td></tr>
-                        <tr style="background: #fff3cd; color: #856404; font-weight: bold;">
-                            <td colspan="2" style="padding: 10px; text-align: center;">Intervalo Motorista (13h às 14h)</td>
+                        <tr><td><span class="saidaEstac">Saída Estac=></span> 07:20</td><td><span class="saidaLoja">Saida Loja=></span> 14:10</td></tr>
+                        <tr><td><span class="saidaEstac">Saída Estac=></span> 07:35</td><td><span class="saidaLoja">Saida Loja=></span> 14:30</td></tr>
+                        <tr><td><span class="saidaEstac">Saída Estac=></span> 07:50</td><td><span class="saidaLoja">Saida Loja=></span> 14:50</td></tr>
+                        <tr><td><span class="saidaEstac">Saída Estac=></span> 08:05</td><td><span class="saidaLoja">Saida Loja=></span> 15:10</td></tr>
+                        <tr><td><span class="saidaEstac">Saída Estac=></span> 08:20</td><td><span class="saidaLoja">Saida Loja=></span> 15:30</td></tr>
+                        <tr><td><span class="saidaEstac">Saída Estac=></span> 08:35</td><td><span class="saidaLoja">Saida Loja=></span> 15:50</td></tr>
+                        <tr><td><span class="saidaEstac">Saída Estac=></span> 08:50</td><td><span class="saidaLoja">Saida Loja=></span> 16:10</td></tr>
+                        <tr><td><span class="saidaEstac">Saída Estac=></span> 09:05</td><td><span class="saidaLoja">Saida Loja=></span> 16:30</td></tr>
+                        <tr><td><span class="saidaEstac">Saída Estac=></span> 09:20</td><td><span class="saidaLoja">Saida Loja=></span> 16:50</td></tr>
+                        <tr><td><span class="saidaEstac">Saída Estac=></span> 09:35</td><td><span class="saidaLoja">Saida Loja=></span> 17:10</td></tr>
+                        <tr><td><span class="saidaEstac">Saída Estac=></span> 09:50</td><td><span class="saidaLoja">Saida Loja=></span> 17:30</td></tr>
+                        <tr><td><span class="saidaEstac">Saída Estac=></span> 10:05</td><td><span class="saidaLoja">Saida Loja=></span> 17:50</td></tr>
+                        <tr><td><span class="saidaEstac">Saída Estac=></span> 10:20</td><td><span class="saidaLoja">Saida Loja=></span> 18:10</td></tr>
+                        <tr><td><span class="saidaEstac">Saída Estac=></span> 10:35</td><td><span class="saidaLoja">Saida Loja=></span> 18:30</td></tr>
+                        <tr><td><span class="saidaEstac">Saída Estac=></span> 10:50</td><td><span class="saidaLoja">Saida Loja=></span> 18:50</td></tr>
+                        <tr><td><span class="saidaEstac">Saída Estac=></span> 11:05</td><td><span class="saidaLoja">Saida Loja=></span> 19:10</td></tr>
+                        <tr><td><span class="saidaEstac">Saída Estac=></span> 11:20</td><td><span class="saidaLoja">Saida Loja=></span> 19:30</td></tr>
+                        <tr><td><span class="saidaEstac">Saída Estac=></span> 11:35</td><td><span class="saidaLoja">Saida Loja=></span> 19:50</td></tr>
+                        <tr class="interval-row">
+                            <td colspan="2">⏸️ Intervalo dos Motoristas (20h às 21h)</td>
                         </tr>
+                        <tr><td><span class="saidaEstac">Saída Estac=></span> 12:05</td><td><span class="saidaLoja">Saida Loja=></span> 21:10</td></tr>
+                        <tr><td><span class="saidaEstac">Saída Estac=></span> 12:20</td><td><span class="saidaLoja">Saida Loja=></span> 21:30</td></tr>
+                        <tr><td><span class="saidaEstac">Saída Estac=></span> 12:35</td><td><span class="saidaLoja">Saida Loja=></span> 21:50</td></tr>
+                        <tr><td><span class="saidaEstac">Saída Estac=></span> 12:50</td><td><span class="saidaLoja">Saida Loja=></span> 22:10</td></tr>
+                        <tr><td><span class="saidaEstac">Saída Estac=></span> 13:05</td><td><span class="saidaLoja">Saida Loja=></span> 22:25</td></tr>
                     </tbody>
                 </table>
             </div>
-        </div>
-    </div>
+        </section>
 
-    <div id="modal" class="modal-overlay" onclick="if(event.target.id === 'modal') toggleModal(false)">
-        <div class="modal-content">
+        <section id="view-form" class="view-section">
+    <div class="sticky-header-view" style="padding: 15px; border-bottom: 2px solid var(--fc-yellow); display: flex; align-items: center; gap: 10px;">
+        <button class="btn-back" onclick="switchView('consulta', true)" style="background:none; border:none; font-weight:800; color:var(--fc-primary); cursor:pointer;">← Cancelar</button>
+        <h2 id="titulo-form" class="section-title" style="margin:0; font-size:18px;">➕ Novo Ramal</h2>
+    </div>
+    <div style="padding: 20px;">
+        <input type="hidden" id="form-id">
+        <div style="margin-bottom: 15px;">
+            <label style="font-size: 12px; font-weight: 700; color: var(--fc-primary);">NOME COMPLETO *</label>
+            <input type="text" id="form-nome" class="form-input" placeholder="Ex: João Silva" style="width:100%; padding:12px; border:1px solid #ddd; border-radius:8px; box-sizing:border-box;">
+        </div>
+        <div style="margin-bottom: 15px;">
+            <label style="font-size: 12px; font-weight: 700; color: var(--fc-primary);">SETOR *</label>
+            <input type="text" id="form-setor" class="form-input" placeholder="Ex: CPD / Logística" style="width:100%; padding:12px; border:1px solid #ddd; border-radius:8px; box-sizing:border-box;">
+        </div>
+        <div style="margin-bottom: 15px;">
+            <label style="font-size: 12px; font-weight: 700; color: var(--fc-primary);">RAMAL *</label>
+            <input type="number" id="form-ramal" class="form-input" placeholder="Ex: 8000" style="width:100%; padding:12px; border:1px solid #ddd; border-radius:8px; box-sizing:border-box;">
+        </div>
+        <div style="margin-bottom: 20px;">
+            <label style="font-size: 12px; font-weight: 700; color: var(--fc-primary);">CELULAR / CONTATO</label>
+<input type="text" id="form-contato" class="form-input" placeholder="(81) 99999-9999" maxlength="15" style="width:100%; padding:12px; border:1px solid #ddd; border-radius:8px; box-sizing:border-box;">        </div>
+        <button onclick="saveData()" style="width:100%; padding:15px; background:var(--fc-primary); color:white; border:none; border-radius:8px; font-weight:800; cursor:pointer;">💾 SALVAR NO SISTEMA</button>
+    </div>
+</section>
+    </main>
+
+    <footer class="footer-fixed">
+        🛡️ Prevenção de Perdas 
+    </footer>
+
+    <div id="modalAcidente" class="modal-acidente">
+        <div class="modal-acidente-content">
             <h2>🚨 Protocolo de Acidente</h2>
             <p>Instruções de emergência.</p>
-            <div class="emergency-box">
-                <div>📞 Seg. do Trabalho: <strong>8578</strong></div>
-                <div>📞 CFTV: <strong>8343</strong></div>
-                <div>📞 SAMU: <strong>192</strong></div>
+            <div class="lista-emergencia">
+                <div class="item-emergencia">
+                    <span class="icon">📞</span>
+                    <span class="texto">Seg. do Trabalho: <strong>8578</strong></span>
+                </div>
+                <div class="item-emergencia">
+                    <span class="icon">📞</span>
+                    <span class="texto">CFTV: <strong>8343</strong></span>
+                </div>
+                <div class="item-emergencia">
+                    <span class="icon">🚑</span>
+                    <span class="texto">SAMU: <strong>192</strong></span>
+                </div>
             </div>
-            <button onclick="toggleModal(false)" class="btn-save btn-secondary">FECHAR</button>
+            <button class="btn-close-acidente" onclick="toggleModal(false)">FECHAR</button>
         </div>
     </div>
 
-    <footer class="footer">🛡️ Prevenção de Perdas | Ferreira Costa</footer>
-    <script src="config.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
