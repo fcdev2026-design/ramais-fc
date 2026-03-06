@@ -21,8 +21,8 @@
     left: 0; 
     width: 100%; 
     /* Ajuste: O valor máximo deve ser maior que o mínimo. Ajustei para o teto de 40px que você definiu. */
-    height: clamp(35px, 6vh, 40px); 
-    background-color: #09be18; 
+    height: clamp(35px, 4vh, 40px); 
+    background-color: #16ca25; 
     color: #000000; 
     
     /* Centralização precisa */
@@ -30,7 +30,7 @@
     align-items: center;
     justify-content: center;
     
-    font-weight: 800; 
+    font-weight: 400; 
     z-index: 9999; 
     border-bottom: 2px solid #000;
     box-sizing: border-box;
@@ -39,7 +39,7 @@
     <marquee scrollamount="10" behavior="scroll" direction="left" style="width: 100%; display: flex; align-items: center;">
         <span id="texto-alerta" style="
             /* Ajuste: Fonte entre 16px e 20px para caber na altura de 40px sem cortar */
-            font-size: clamp(14px, 4vw, 20px); 
+            font-size: clamp(14px, 3vw, 20px); 
             white-space: nowrap;
             text-transform: uppercase;
             line-height: 1;
@@ -67,7 +67,7 @@
         </header>
         <div class="marquee-info">
             <marquee behavior="scroll" direction="left">
-                🚌 📢 Informativo: Confira os novos **Horários do Ônibus Translado FC** no menu lateral 
+                🚌 📢 Informativo: Confira os novos **Horários do Ônibus Translado FC** no menu lateral                          
             </marquee>
         </div>
     </div>
@@ -110,6 +110,7 @@
     </nav>
 
     <main class="container">
+
         <section id="view-consulta" class="view-section active">
             <div class="search-container">
                 <input type="text" id="search" onkeyup="filtrar()" 
@@ -194,7 +195,8 @@
     </div>
 </section>
     </main>
-
+<div class="outdoorleft"></div>
+<div class="outdoorright"></div>
     <footer class="footer-fixed">
         🛡️ Prevenção de Perdas 
     </footer>
@@ -223,4 +225,18 @@
 
     <script src="script.js"></script>
 </body>
+<div class="ad-lateral ad-esquerda">
+    <img 
+        src="https://marketplace.canva.com/EAFbJQDjaSA/1/0/900w/canva-feliz-p%C3%A1scoa-ousado-verde-e-marrom-de-chocolate-story-do-instagram-XjEs_qmrJYk.jpg"
+        alt="Mensagem de Páscoa"
+        loading="lazy">
+</div>
+
+<!-- Anúncio lateral direito -->
+<div class="ad-lateral ad-direita">
+    <img 
+        src="https://marketplace.canva.com/EAF93AcaaQ4/3/0/900w/canva-story-do-instagram-dia-da-mulher-mensagem-floral-rosa-qEPBrR9lfwQ.jpg"
+        alt="Mensagem Dia Internacional da Mulher"
+        loading="lazy">
+</div>
 </html>

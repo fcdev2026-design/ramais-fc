@@ -137,42 +137,67 @@ async function fetchData() {
 function renderTable(filtro = "") {
     const corpo = document.getElementById('corpoTabela');
     if (!corpo) return;
+
     const termo = filtro.toLowerCase().trim();
-    const grupos = {};
-
-    const filtrados = dadosRamais.filter(i => 
-        (i.nome || "").toLowerCase().includes(termo) || 
-        (i.setor || "").toLowerCase().includes(termo) || 
-        (i.ramal || "").toString().includes(termo)
-    );
-
-    filtrados.forEach(item => {
-        const s = item.setor || "OUTROS";
-        if (!grupos[s]) grupos[s] = [];
-        grupos[s].push(item);
+    
+    // 1. Filtragem eficiente
+    const filtrados = dadosRamais.filter(i => {
+        const nome = (i.nome || "").toLowerCase();
+        const setor = (i.setor || "").toLowerCase();
+        const ramal = (i.ramal || "").toString();
+        return nome.includes(termo) || setor.includes(termo) || ramal.includes(termo);
     });
 
-    let htmlFinal = "";
-    for (let setor in grupos) {
-        htmlFinal += `<tr class="row-setor"><td colspan="2">${setor}</td></tr>`;
-        grupos[setor].forEach(p => {
-            htmlFinal += `
-            <tr class="item-row">
-                <td>
-                    <div style="font-weight:700; color:#1e293b;">${p.nome}</div>
-                    <div style="font-size:11px; color:#64748b;">📍 ${p.setor} ${p.contato ? '| 📱 '+p.contato : ''}</div>
-                    <div style="margin-top:8px">
-                        <span onclick="editItem('${p.id}')" style="color:var(--fc-primary); font-size:10px; cursor:pointer; font-weight:bold; text-decoration:underline;">EDITAR</span>
-                        <span onclick="deleteItem('${p.id}')" style="color:var(--fc-accent); font-size:10px; cursor:pointer; font-weight:bold; margin-left:15px; text-decoration:underline;">EXCLUIR</span>
+    // 2. Agrupamento por setor
+    const grupos = filtrados.reduce((acc, item) => {
+        const s = item.setor || "OUTROS";
+        if (!acc[s]) acc[s] = [];
+        acc[s].push(item);
+        return acc;
+    }, {});
+
+    const setoresOrdenados = Object.keys(grupos).sort();
+
+    // 3. Verificação de dados vazios
+    if (setoresOrdenados.length === 0) {
+        corpo.innerHTML = `<tr><td colspan="2" style="text-align:center; padding: 30px; color: #64748b;">Nenhum ramal encontrado.</td></tr>`;
+        return;
+    }
+
+    // 4. Construção do HTML com o Badge Amarelo
+    const htmlFinal = setoresOrdenados.map(setor => {
+        const headerSetor = `
+            <tr class="row-setor" style="background-color: #f8fafc;">
+                <td colspan="2" style="color: #334155; font-weight: 800; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #e2e8f0; padding: 12px 15px;">
+                    📂 ${setor}
+                </td>
+            </tr>`;
+
+        const itens = grupos[setor].map(p => `
+            <tr class="item-row" style="border-bottom: 1px solid #f1f5f9;">
+                <td style="padding: 12px 15px;">
+                    <div style="font-weight: 600; color: #1e293b; font-size: 14px;">${p.nome || 'Sem Nome'}</div>
+                    <div style="font-size: 11px; color: #64748b; margin-top: 2px;">
+                        ${p.contato ? '📱 ' + p.contato : '📍 ' + (p.setor || 'Geral')}
+                    </div>
+                    <div style="margin-top: 8px; display: flex; gap: 15px;">
+                        <span onclick="editItem('${p.id}')" style="color: #2563eb; font-size: 11px; cursor: pointer; font-weight: 700; text-transform: uppercase;">Editar</span>
+                        <span onclick="deleteItem('${p.id}')" style="color: #dc2626; font-size: 11px; cursor: pointer; font-weight: 700; text-transform: uppercase;">Excluir</span>
                     </div>
                 </td>
-                <td style="text-align:right"><span class="ramal-badge">📞 ${p.ramal}</span></td>
-            </tr>`;
-        });
-    }
-    corpo.innerHTML = htmlFinal || "<tr><td colspan='2' style='text-align:center;'>Nenhum resultado.</td></tr>";
-}
+                <td style="text-align: right; padding: 12px 15px; vertical-align: middle;">
+                    <span style="background-color: #FFD400; color: #000; padding: 6px 10px; border-radius: 6px; font-weight: 800; font-size: 13px; border: 1px solid #eab308; display: inline-block;">
+                        📞 ${p.ramal}
+                    </span>
+                </td>
+            </tr>
+        `).join('');
 
+        return headerSetor + itens;
+    }).join('');
+
+    corpo.innerHTML = htmlFinal;
+}
 async function saveData() {
     const id = document.getElementById('form-id').value;
     const payload = {

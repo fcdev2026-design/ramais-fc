@@ -42,8 +42,8 @@ body::before {
     background: var(--fc-primary); padding: 15px 20px; 
     display: flex; justify-content: center; align-items: center; position: relative;
 }
-.brand-name img { height: 30px; }
-.brand-name span { display: block; color: var(--fc-white); font-size: 9px; letter-spacing: 2px; text-align: center; margin-top: 4px; }
+.brand-name img { height: 40px; }
+.brand-name span { display: block; color: var(--fc-white); font-size: 12px; letter-spacing: 2px; text-align: center; margin-top: 4px; }
 
 /* ÍCONE DO MENU */
 .menu-icon { 
@@ -53,7 +53,7 @@ body::before {
 }
 .menu-icon .bar { width: 22px; height: 3px; background: var(--fc-primary); border-radius: 2px; }
 
-.marquee-info { background: var(--fc-yellow); color: var(--fc-primary-dark); font-size: 14px; font-weight: 800; padding: 5px 0; }
+.marquee-info { background:rgb(251, 252, 250); color: var(--fc-primary-dark); font-size: 15px; font-weight: 500; padding: 5px 0; }
 
 /* SIDEBAR (MENU LATERAL) */
 .sidebar { 
@@ -260,4 +260,106 @@ body::before {
     0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 51, 153, 0.4); }
     70% { transform: scale(1.02); box-shadow: 0 0 0 10px rgba(0, 51, 153, 0); }
     100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 51, 153, 0); }
+}
+/* Configuração Geral dos Anúncios Laterais com Clamp */
+.ad-lateral {
+    position: fixed;
+    /* Topo ajustado para ficar abaixo do marquee (aprox 160px a 180px) */
+    top: clamp(160px, 20vh, 180px); 
+    
+    /* Largura Responsiva: 
+       Min: 100px | Ideal: baseado na sobra da tela | Max: 250px */
+    width: clamp(100px, calc((100vw - 850px) / 2.5), 250px);
+    
+    /* Altura Responsiva: 
+       Respeita o espaço entre o topo e o footer fixo */
+    height: clamp(300px, calc(100vh - 300px), 700px);
+
+    background-color: rgba(255, 255, 255, 0.4); 
+    background-size: 100% 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    /* Z-index 5 mantém atrás do menu (5000) e do header (1000) */
+    z-index: 5; 
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0, 51, 153, 0.1);
+}
+
+.ad-esquerda {
+    /* Posicionamento fluido usando clamp para não colar na borda da tela */
+    left: clamp(5px, 2vw, 30px);
+     background-size: 100% 100%;
+}
+
+.ad-direita {
+    /* Posicionamento fluido usando clamp para não colar na borda da tela */
+    right: clamp(5px, 2vw, 30px);
+     background-size: 100% 100%;
+}
+
+/* Imagens dentro do anúncio sempre preenchendo o espaço */
+.ad-lateral img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* IMPORTANTE: Se a tela for menor que 1100px, 
+   o espaço lateral é insuficiente para anúncios sem esmagar o centro. */
+@media (max-width: 1100px) {
+    .ad-lateral {
+        display: none !important;
+    }
+}
+/* Configuração Geral dos Anúncios Laterais com Imagens e Clamp */
+.ad-lateral {
+    position: fixed;
+    /* Alinhado abaixo do header/marquee */
+    top: clamp(160px, 20vh, 180px); 
+    
+    /* Largura Responsiva: Min: 100px | Ideal: baseado na sobra | Max: 250px */
+    width: clamp(100px, calc((100vw - 770px) / 2.5), 250px);
+    
+    /* Altura Responsiva respeitando o topo e o footer fixo */
+    height: clamp(300px, calc(100vh - 220px), 700px);
+
+    background-color: rgba(255, 255, 255, 0.4); 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    /* Z-index 5 mantém atrás do menu (5000) e do header (1000) */
+    z-index: 5; 
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0, 51, 153, 0.1);
+}
+
+/* Configuração para a imagem preencher a div perfeitamente */
+.ad-lateral img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Garante que a imagem cubra a div sem distorcer */
+}
+
+.ad-esquerda {
+    /* Posicionamento fluido usando clamp para não colar na borda da tela */
+    left: clamp(5px, 2vw, 30px);
+}
+
+.ad-direita {
+    /* Posicionamento fluido usando clamp para não colar na borda da tela */
+    right: clamp(5px, 2vw, 30px);
+}
+
+/* IMPORTANTE: Se a tela for menor que 1100px, ocultar anúncios */
+@media (max-width: 1100px) {
+    .ad-lateral {
+        display: none !important;
+    }
 }
