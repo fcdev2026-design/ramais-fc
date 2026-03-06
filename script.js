@@ -11,11 +11,18 @@ let dadosRamais = [];
 let timeoutBusca = null;
 
 const playlistData = [
-    { nome: "Som de Chuva", estilo: "relax", url: "URL_DO_SUPABASE_1" },
-    { nome: "Ambiente Loja", estilo: "foco", url: "URL_DO_SUPABASE_2" },
-    { nome: "Alerta Geral", estilo: "todos", url: "URL_DO_SUPABASE_3" }
+{ nome: "Louis armstrong", musica: "What a Wonderful World", estilo: "relax", url: "https://archive.org/download/louis-armstrong-what-a-wonderful-world-vinyl-single-1967/A-What%20A%20Wonderful%20World.mp3" },
+    { nome: "The Cranberries", musica: "Linger", estilo: "balada pop", url: "https://ia800900.us.archive.org/32/items/the-cranberries-linger/The%20Cranberries%20-%20Linger.mp4" },
+    { nome: "Tears For Fears", musica: "Woman In Chains", estilo: "balada pop", url: "https://dn711302.ca.archive.org/0/items/Tears_For_Fears_And_Oleta_Adams_Woman_In_Chains/Tears_For_Fears_And_Oleta_Adams_Woman_In_Chains.mp4" }, 
+    { nome: "Legião Urbana", musica: "Quase sem querer", estilo: "rock nacional", url: "https://archive.org/download/1986-legiao-urbana-dois/02%20-%20Quase%20sem%20querer.mp3" }, 
+    { nome: "Christopher Cross", musica: "Sailing", estilo: "relax", url: "https://archive.org/download/youtube-JNAgBRB7ouY/Christopher_Cross_-_Sailing_NAVEGANDO_SIN_RUMBO_.-JNAgBRB7ouY.mp4" },
+    { nome: "Djavan", musica: "Oceano", estilo: "MPB", url: "https://archive.org/download/05.-oceano/05.%20Oceano.mp3" },
+    { nome: "Djavan", musica: "Outono", estilo: "MPB", url: "https://archive.org/download/05.-oceano/06.%20Outono.mp3" },
+    { nome: "Djavan", musica: "Meu Bem Querer", estilo: "MPB", url: "https://archive.org/download/14.-milagreiro-feat.-cassia-eller/08.%20Meu%20Bem%20Querer.mp3" },
+    { nome: "Os Paralamas do Sucesso", musica: "Romance Ideal", estilo: "rock nacional", url: "https://archive.org/download/6-mensagem-de-amor/4%20-%20Romance%20Ideal.mp3" },
+    { nome: "Marina Lima", musica: "Virgem", estilo: "MPB", url: "https://archive.org/download/04.-hearts_202504/06.%20Virgem.mp3" },
+    { nome: "Marina Lima", musica: "Fullgás", estilo: "MPB", url: "https://archive.org/download/09.-veneno-veleno_202404/01.%20Fullg%C3%A1s.mp3" }
 ];
-
 const gradeHorariosOnibus = [
     { h: "07:20", orig: "ESTAC." }, { h: "07:35", orig: "ESTAC." }, { h: "07:50", orig: "ESTAC." },
     { h: "08:05", orig: "ESTAC." }, { h: "08:20", orig: "ESTAC." }, { h: "08:35", orig: "ESTAC." },
@@ -231,17 +238,30 @@ function filtrar() {
 }
 
 /* ==========================================================================
+/* ========================================================================== 
    6. MÓDULO: MEDIA PLAYER
    ========================================================================== */
 const audio = document.getElementById('mainAudioPlayer');
 const btnPlay = document.getElementById('mp-play-pause');
 const displayNome = document.getElementById('mp-now-playing');
+const volSlider = document.getElementById('mp-volume'); // ID correto conforme seu CSS
+
+// AJUSTE INICIAL: Volume em 40% (0.4 para o áudio, 40 para o slider)
+if (audio) { 
+    audio.volume = 0.4; 
+}
+if (volSlider) { 
+    volSlider.value = 40; 
+}
 
 function mpRender(filtro = 'todos') {
     const lista = document.getElementById('mp-list');
     if(!lista) return;
     lista.innerHTML = "";
+    
+    // Filtro da Playlist
     const filtradas = filtro === 'todos' ? playlistData : playlistData.filter(m => m.estilo === filtro);
+    
     filtradas.forEach(musica => {
         const div = document.createElement('div');
         div.className = "mp-song-item";
@@ -259,21 +279,40 @@ function mpPlay(musica) {
 }
 
 function mpToggle() {
-    if (audio.paused) { audio.play(); btnPlay.innerText = "⏸️"; } 
-    else { audio.pause(); btnPlay.innerText = "▶️"; }
+    if (audio.paused) { 
+        audio.play(); 
+        btnPlay.innerText = "⏸️"; 
+    } else { 
+        audio.pause(); 
+        btnPlay.innerText = "▶️"; 
+    }
 }
 
 function mpStop() {
-    audio.pause(); audio.currentTime = 0;
+    audio.pause(); 
+    audio.currentTime = 0;
     btnPlay.innerText = "▶️";
     displayNome.innerText = "Parado";
 }
 
-function mpFilter(estilo) {
-    document.querySelectorAll('.mp-tab-btn').forEach(b => b.classList.remove('active'));
-    mpRender(estilo);
+// Função de Controle de volume (ligada ao evento oninput do seu HTML)
+function mpVolume(val) {
+    if (audio) {
+        audio.volume = val / 100;
+    }
 }
 
+function mpFilter(estilo) {
+    // Remove classe active de todos os botões de aba
+    document.querySelectorAll('.mp-tab-btn').forEach(b => b.classList.remove('active'));
+    
+    // Adiciona active ao botão clicado (quem chamou a função)
+    if (event && event.target) {
+        event.target.classList.add('active');
+    }
+    
+    mpRender(estilo);
+}
 /* ==========================================================================
    7. INTERFACE, CLIMA (OPEN-METEO) E NAVEGAÇÃO
    ========================================================================== */
