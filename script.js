@@ -346,7 +346,7 @@ function mpFilter(estilo) {
 async function buscarClimaAPI() {
     try {
         // Coordenadas de Recife: lat -8.05, lon -34.88
-        const url = `https://api.open-meteo.com/v1/forecast?latitude=-8.05&longitude=-34.88&current=temperature_2m,relative_humidity_2m,is_day,precipitation,weather_code&timezone=America%2FRecife`;
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=-8.05&longitude=-34.88&current=temperature_2m,weather_code&timezone=America%2FRecife`;
         
         const response = await fetch(url);
         const data = await response.json();
@@ -355,17 +355,33 @@ async function buscarClimaAPI() {
             const temp = Math.round(data.current.temperature_2m);
             const code = data.current.weather_code;
             
-            // Códigos Open-Meteo: 51, 53, 55, 61, 63, 65, 80, 81, 82 são chuva
-            const isChuva = [51, 53, 55, 61, 63, 65, 80, 81, 82].includes(code);
+            // Definição das categorias baseada nos códigos WMO
+            const codigosChuva = [51, 53, 55, 61, 63, 65, 80, 81, 82, 95, 96, 99];
+            const codigosNublado = [1, 2, 3];
             
+            let statusTexto = "Céu Limpo";
+            let temChuva = false;
+
+            if (codigosChuva.includes(code)) {
+                statusTexto = "Alerta de Chuva";
+                temChuva = true;
+            } else if (codigosNublado.includes(code)) {
+                statusTexto = "Tempo Nublado";
+                temChuva = false;
+            }
+
             const climaInfo = {
                 temp: temp,
-                chuva: isChuva,
-                msg: isChuva ? "Alerta de Chuva" : "Céu Limpo"
+                chuva: temChuva,
+                msg: statusTexto,
+                lastUpdate: new Date().toLocaleTimeString() // Para você conferir se atualizou
             };
 
             localStorage.setItem('weather_data_v2', JSON.stringify(climaInfo));
-            atualizarRelogioTela(); // Atualiza a barra imediatamente
+            
+            if (typeof atualizarRelogioTela === 'function') {
+                atualizarRelogioTela();
+            }
         }
     } catch (e) {
         console.error("Erro ao buscar clima:", e);
