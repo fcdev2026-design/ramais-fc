@@ -195,7 +195,9 @@ body::before {
     width: 100%; padding: 15px; border: 2px solid #e2e8f0; 
     border-radius: 10px; font-size: 16px; box-sizing: border-box; outline: none;
 }
-
+.btn-back{
+    border-radius: 10px;
+}
 .table-ramais { width: 100%; border-collapse: collapse; }
 .row-setor td { padding: 20px 20px 8px; font-weight: 800; color: var(--fc-primary); font-size: 11px; text-transform: uppercase; border-bottom: 2px solid var(--fc-yellow); }
 .item-row td { padding: 15px 20px; border-bottom: 1px solid #f1f5f9; }
