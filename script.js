@@ -81,7 +81,26 @@ document.addEventListener('DOMContentLoaded', () => {
    ========================================================================== */
 function verificarProximoOnibus() {
     const agora = new Date();
-    const tempoAtualEmMinutos = (agora.getHours() * 60) + agora.getMinutes();
+    const hora = agora.getHours();
+    const tempoAtualEmMinutos = (hora * 60) + agora.getMinutes();
+    
+    const divAlerta = document.getElementById('alerta-onibus');
+    const textoAlerta = document.getElementById('texto-alerta');
+    
+    if (!divAlerta || !textoAlerta) return;
+
+    // Implementação do Intervalo na Marquee
+    const noIntervalo1 = (hora === 13); // 13:00 às 13:59
+    const noIntervalo2 = (hora === 20); // 20:00 às 20:59
+
+    if (noIntervalo1 || noIntervalo2) {
+        const periodo = noIntervalo1 ? "13:00 às 14:00" : "20:00 às 21:00";
+        textoAlerta.innerText = `⚠️ INTERVALO DOS MOTORISTAS: RETORNO DAS ATIVIDADES APÓS ÀS ${periodo.split(' às ')[1]} ⚠️`;
+        divAlerta.style.display = 'flex';
+        return; // Interrompe para não mostrar alerta de ônibus saindo
+    }
+
+    // Lógica Original de Próximo Ônibus
     let mostrarAlerta = false;
     let infoImediato = null;
     let infoFuturo = null;
@@ -99,21 +118,16 @@ function verificarProximoOnibus() {
         }
     }
 
-    const divAlerta = document.getElementById('alerta-onibus');
-    const textoAlerta = document.getElementById('texto-alerta');
-
-    if (divAlerta && textoAlerta) {
-        if (mostrarAlerta) {
-            const destino = infoImediato.orig === "ESTAC." ? "LOJA" : "ESTAC.";
-            const novaMsg = `🚨 AGORA: ÔNIBUS SAINDO ÀS ${infoImediato.h} (SAÍDA ${infoImediato.orig} ➔ ${destino}) 🚨 FAVOR SE DIRIGIR AO PONTO DE EMBARQUE 🚨 PRÓXIMA SAÍDA ÀS ${infoFuturo.h} (${infoFuturo.orig}) 🚨`;
-            
-            if (textoAlerta.innerText !== novaMsg) {
-                textoAlerta.innerText = novaMsg;
-                divAlerta.style.display = 'flex';
-            }
-        } else {
-            divAlerta.style.display = 'none';
+    if (mostrarAlerta) {
+        const destino = infoImediato.orig === "ESTAC." ? "LOJA" : "ESTAC.";
+        const novaMsg = `🚨 AGORA: ÔNIBUS SAINDO ÀS ${infoImediato.h} (SAÍDA ${infoImediato.orig} ➔ ${destino}) 🚨 FAVOR SE DIRIGIR AO PONTO DE EMBARQUE 🚨 PRÓXIMA SAÍDA ÀS ${infoFuturo.h} (${infoFuturo.orig}) 🚨`;
+        
+        if (textoAlerta.innerText !== novaMsg) {
+            textoAlerta.innerText = novaMsg;
+            divAlerta.style.display = 'flex';
         }
+    } else {
+        divAlerta.style.display = 'none';
     }
 }
 
@@ -204,7 +218,7 @@ async function saveData() {
         nome: document.getElementById('form-nome').value,
         setor: document.getElementById('form-setor').value,
         ramal: document.getElementById('form-ramal').value,
-        contato: document.getElementById('form-contato').value
+       
     };
     if (!payload.nome || !payload.setor || !payload.ramal) return alert("Preencha os campos obrigatórios.");
     try {
@@ -226,7 +240,6 @@ function editItem(id) {
     document.getElementById('form-nome').value = item.nome;
     document.getElementById('form-setor').value = item.setor;
     document.getElementById('form-ramal').value = item.ramal;
-    document.getElementById('form-contato').value = item.contato || '';
     document.getElementById('titulo-form').innerText = "📝 Editar Ramal";
     switchView('form', true);
 }
