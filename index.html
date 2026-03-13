@@ -95,36 +95,39 @@
             </div>
         </section>
 
-        <section id="view-form" class="view-section" style="display: none;">
-            <div class="sticky-header-view" style="padding: 15px; border-bottom: 2px solid #FFD400; display: flex; align-items: center; gap: 15px;">
-                <button class="btn-back" onclick="switchView('consulta', true)" style="background:none; border:none; font-weight:800; color:#003399; cursor:pointer;">← CANCELAR</button>
-                <h2 id="titulo-form" style="margin:0; font-size:1.2rem; color:#003399;">➕ Novo Ramal</h2>
-            </div>
+       <section id="view-form" class="view-section" style="display: none;">
+    <div class="sticky-header-view" style="padding: 15px; border-bottom: 2px solid #FFD400; display: flex; align-items: center; gap: 15px;">
+        <button class="btn-back" onclick="switchView('consulta')" style="background:none; border:none; font-weight:800; color:#003399; cursor:pointer;">← CANCELAR</button>
+        <h2 id="titulo-form" style="margin:0; font-size:1.2rem; color:#003399;">➕ Novo Ramal</h2>
+    </div>
 
-            <div style="padding: 20px; max-width: 500px; margin: 0 auto;">
-                <input type="hidden" id="form-id">
-                <div style="margin-bottom: 15px;">
-                    <label style="display:block; font-weight:700; font-size:12px; margin-bottom:5px;">NOME COMPLETO *</label>
-                    <input type="text" id="form-nome" class="form-input" style="width:100%; padding:12px; border:1px solid #ccc; border-radius:8px;" placeholder="Ex: JOÃO SILVA">
-                </div>
-                <div style="margin-bottom: 15px;">
-                    <label style="display:block; font-weight:700; font-size:12px; margin-bottom:5px;">SETOR *</label>
-                    <input type="text" id="form-setor" class="form-input" style="width:100%; padding:12px; border:1px solid #ccc; border-radius:8px;" placeholder="Ex: PREVENÇÃO">
-                </div>
-                <div style="margin-bottom: 25px;">
-                    <label style="display:block; font-weight:700; font-size:12px; margin-bottom:5px;">RAMAL *</label>
-                    <input type="number" id="form-ramal" class="form-input" style="width:100%; padding:12px; border:1px solid #ccc; border-radius:8px;" placeholder="Ex: 8000">
-                </div>
-                
-                <button onclick="saveData()" style="width:100%; padding:18px; background:#003399; color:white; font-weight:800; border:none; border-radius:8px; cursor:pointer; font-size:16px; margin-bottom: 10px;">
-                    💾 SALVAR NO SISTEMA
-                </button>
+    <div style="padding: 20px; max-width: 500px; margin: 0 auto;">
+        <input type="hidden" id="form-id">
+        
+        <div style="margin-bottom: 15px;">
+            <label style="display:block; font-weight:700; font-size:12px; margin-bottom:5px;">NOME COMPLETO *</label>
+            <input type="text" id="form-nome" class="form-input" style="width:100%; padding:12px; border:1px solid #ccc; border-radius:8px;" placeholder="Ex: JOÃO SILVA">
+        </div>
+        
+        <div style="margin-bottom: 15px;">
+            <label style="display:block; font-weight:700; font-size:12px; margin-bottom:5px;">SETOR *</label>
+            <input type="text" id="form-setor" class="form-input" style="width:100%; padding:12px; border:1px solid #ccc; border-radius:8px;" placeholder="Ex: PREVENÇÃO">
+        </div>
+        
+        <div style="margin-bottom: 25px;">
+            <label style="display:block; font-weight:700; font-size:12px; margin-bottom:5px;">RAMAL *</label>
+            <input type="number" id="form-ramal" class="form-input" style="width:100%; padding:12px; border:1px solid #ccc; border-radius:8px;" placeholder="Ex: 8000">
+        </div>
+        
+        <button onclick="saveData()" style="width:100%; padding:18px; background:#003399; color:white; font-weight:800; border:none; border-radius:8px; cursor:pointer; font-size:16px; margin-bottom: 10px;">
+            💾 SALVAR NO SISTEMA
+        </button>
 
-                <button onclick="switchView('consulta', true)" style="width:100%; padding:12px; background:#f1f5f9; color:#64748b; font-weight:700; border:none; border-radius:8px; cursor:pointer;">
-                    CANCELAR
-                </button>
-            </div>
-        </section>
+        <button onclick="switchView('consulta')" style="width:100%; padding:12px; background:#f1f5f9; color:#64748b; font-weight:700; border:none; border-radius:8px; cursor:pointer;">
+            CANCELAR
+        </button>
+    </div>
+</section>
     </main>
 
     <footer class="footer-fixed">🛡️ Prevenção de Perdas</footer>
