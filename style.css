@@ -160,8 +160,10 @@ body::before {
    ========================================================================== */
 .ad-lateral {
     position: fixed;
-    top: 142px; /* Ajuste esse valor se o marquee verde for maior/menor */
-    height: calc(100vh - 200px);
+    top: 130px; /* Ajuste esse valor se o marquee verde for maior/menor */
+    height: calc(100vh - 173px);
+    background-repeat: no-repeat;
+
     width: calc((100vw - 840px) / 2); 
     z-index: 1; 
     overflow: hidden;
