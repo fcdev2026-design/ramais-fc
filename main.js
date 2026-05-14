@@ -124,10 +124,10 @@ function renderTable(filtro = "") {
     }
 
     corpo.innerHTML = setoresOrdenados.map(setor => {
-        const header = `<tr class="row-setor"><td colspan="2">📂 ${setor}</td></tr>`;
+        const header = `<tr class="row-setor" ><td colspan="2">📂 ${setor}</td></tr>`;
         const itens = grupos[setor].map(p => `
             <tr class="item-row">
-                <td>
+                <td >
                     <div style="font-weight:600;">${p.nome || 'Sem Nome'}</div>
                     <div style="font-size:11px;color:#64748b;">📍 ${p.setor || 'Geral'}</div>
                     <div style="margin-top:8px;display:flex;gap:15px;">
