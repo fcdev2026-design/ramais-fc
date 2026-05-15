@@ -161,18 +161,74 @@ body::before {
 .ad-lateral {
     position: fixed;
     top: 130px; /* Ajuste esse valor se o marquee verde for maior/menor */
-    height: calc(100vh - 173px);
-    background-repeat: no-repeat;
-
+    height: calc(100vh - 200px);
     width: calc((100vw - 840px) / 2); 
     z-index: 1; 
     overflow: hidden;
     display: flex;
     transition: width 0.3s ease;
 }
+/* Container que você já tem, com ajustes de segurança */
+.ad-lateral {
+    position: fixed;
+    top: 130px;
+    height: calc(100vh - 200px);
+    width: calc((100vw - 840px) / 2); 
+    z-index: 1; 
+    overflow: hidden;
+    display: flex;
+    transition: all 0.3s ease;
+}
 
+.ad-esquerda { 
+    left: 10px; 
+}
+
+/* Estilização do Card com fontes flexíveis */
+.card-copa-familia {
+    background: linear-gradient(180deg, #009c3b 0%, #ffdf00 100%);
+    color: #002776;
+    padding: 15px;
+    text-align: center;
+    font-family: 'Arial Black', sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    box-sizing: border-box; /* Garante que o padding não aumente a largura */
+}
+
+/* Ajuste de texto para caber em colunas estreitas */
+.card-copa-familia h2 {
+    font-size: clamp(1rem, 2vw, 1.5rem); /* Tamanho dinâmico */
+    margin: 10px 0;
+    line-height: 1.1;
+}
+
+.card-copa-familia p {
+    font-size: clamp(0.8rem, 1.5vw, 1rem);
+    margin: 5px 0;
+}
+
+/* --- REGRAS DE RESPONSIVIDADE --- */
+
+/* 1. Esconder em tablets e celulares (onde não há espaço lateral) */
+@media (max-width: 1024px) {
+    .ad-lateral {
+        display: none; /* Em telas menores que 1024px, o banner some para não cobrir o conteúdo */
+    }
+}
+
+/* 2. Ajuste para telas muito grandes (UltraWide) */
+@media (min-width: 1800px) {
+    .ad-lateral {
+        width: 300px; /* Limita a largura em telas gigantes para não ficar exagerado */
+    }
+}
 .ad-esquerda { left: 10px;
- 
 
 }
 .ad-direita { right: 10px; }
