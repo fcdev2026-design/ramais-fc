@@ -17,8 +17,8 @@ const decodificar = (str) => {
 };
 
 // --- SENHAS PROTEGIDAS (Disfarçadas no código) ---
-const S1 = "QVBQQURN"; // Disfarce de APPADM
-const S2 = "RkMyMDI2"; // Disfarce de FC2026
+const S1 = "QVBQQURN"; 
+const S2 = "RkMyMDI2"; 
 
 document.addEventListener('DOMContentLoaded', () => {
     console.log("🚀 Sistema Operacional Local Iniciado...");
