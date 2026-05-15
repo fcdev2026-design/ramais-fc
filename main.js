@@ -1,8 +1,24 @@
 /* ==========================================================================
-   5. NÚCLEO OPERACIONAL (MAIN) - VERSÃO LOCAL COM SENHA "APPADM"
+   5. NÚCLEO OPERACIONAL (MAIN) - VERSÃO PROTEGIDA COM SIDEBAR
    ========================================================================== */
 
 let dadosRamais = []; 
+
+// --- FUNÇÕES DE TRADUÇÃO (BASE64) ---
+const codificar = (str) => btoa(unescape(encodeURIComponent(str)));
+
+const decodificar = (str) => {
+    if (!str) return "";
+    try {
+        return decodeURIComponent(escape(atob(str)));
+    } catch (e) {
+        return str; 
+    }
+};
+
+// --- SENHAS PROTEGIDAS (Disfarçadas no código) ---
+const S1 = "QVBQQURN"; // Disfarce de APPADM
+const S2 = "RkMyMDI2"; // Disfarce de FC2026
 
 document.addEventListener('DOMContentLoaded', () => {
     console.log("🚀 Sistema Operacional Local Iniciado...");
@@ -64,14 +80,12 @@ function switchView(view, skipMenu = false) {
 
 function fetchData() {
     const cache = localStorage.getItem('cache_fc_ramais');
-    
     if (cache) { 
         dadosRamais = JSON.parse(cache); 
     } else if (window.LISTA_MESTRA) {
         dadosRamais = window.LISTA_MESTRA;
         localStorage.setItem('cache_fc_ramais', JSON.stringify(dadosRamais));
     }
-    
     renderTable(); 
 }
 
@@ -82,14 +96,14 @@ function renderTable(filtro = "") {
     const termo = filtro.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").trim();
 
     const filtrados = dadosRamais.filter(i => {
-        const nome = (i.nome || "").toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
-        const setor = (i.setor || "").toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
-        const ramal = (i.ramal || "").toString();
+        const nome = decodificar(i.nome || "").toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+        const setor = decodificar(i.setor || "").toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+        const ramal = decodificar(i.ramal || "").toString();
         return nome.includes(termo) || setor.includes(termo) || ramal.includes(termo);
     });
 
     const grupos = filtrados.reduce((acc, item) => {
-        const s = item.setor || "OUTROS";
+        const s = decodificar(item.setor) || "OUTROS";
         if (!acc[s]) acc[s] = [];
         acc[s].push(item);
         return acc;
@@ -107,41 +121,58 @@ function renderTable(filtro = "") {
         const itens = grupos[setor].map(p => `
             <tr class="item-row">
                 <td>
-                    <div style="font-weight:600; color:#1e293b;">${p.nome || 'Sem Nome'}</div>
-                    <div style="font-size:11px;color:#64748b;">📍 ${p.setor || 'Geral'}</div>
+                    <div style="font-weight:600; color:#1e293b;">${decodificar(p.nome)}</div>
+                    <div style="font-size:11px;color:#64748b;">📍 ${decodificar(p.setor)}</div>
                     <div style="margin-top:8px;display:flex;gap:15px;">
                         <span onclick="prepareEdit('${p.id}')" style="color:#2563eb; cursor:pointer; font-size:11px; font-weight:700;">EDITAR</span>
                         <span onclick="confirmDelete('${p.id}')" style="color:#ef4444; cursor:pointer; font-size:11px; font-weight:700;">EXCLUIR</span>
                     </div>
                 </td>
                 <td style="text-align:right; vertical-align:middle;">
-                    <span class="ramal-badge">📞 ${p.ramal}</span>
+                    <span class="ramal-badge">📞 ${decodificar(p.ramal)}</span>
                 </td>
             </tr>`).join('');
         return header + itens;
     }).join('');
 }
 
-// --- OPERAÇÕES CRUD (COM VALIDAÇÃO DE SENHA "APPADM") ---
+// --- OPERAÇÕES CRUD (COM PRIVACIDADE E SENHA OCULTA) ---
+
+function checkAuth() {
+    const senha = prompt("🔒 Digite a senha administrativa:");
+    if (senha === null) return false;
+    
+    // Codifica o que você digitou e compara com os códigos S1 ou S2
+    const sC = codificar(senha);
+    if (sC === S1 || sC === S2) {
+        return true;
+    } else {
+        alert("❌ Senha incorreta!");
+        return false;
+    }
+}
 
 function saveData() {
     const id = document.getElementById('form-id').value;
-    const nome = document.getElementById('form-nome').value.toUpperCase().trim();
-    const setor = document.getElementById('form-setor').value.toUpperCase().trim();
-    const ramal = document.getElementById('form-ramal').value.trim();
+    const n = document.getElementById('form-nome').value.toUpperCase().trim();
+    const s = document.getElementById('form-setor').value.toUpperCase().trim();
+    const r = document.getElementById('form-ramal').value.trim();
 
-    if (!nome || !setor || !ramal) {
+    if (!n || !s || !r) {
         alert("⚠️ Preencha todos os campos!");
         return;
     }
 
-    if (id) {
-        const index = dadosRamais.findIndex(r => r.id === id);
-        if (index !== -1) dadosRamais[index] = { id, nome, setor, ramal };
-    } else {
-        const novo = { id: self.crypto.randomUUID(), nome, setor, ramal };
-        dadosRamais.push(novo);
-    }
+    const novoDado = { 
+        id: id || self.crypto.randomUUID(), 
+        nome: codificar(n), 
+        setor: codificar(s), 
+        ramal: codificar(r) 
+    };
+
+    const index = dadosRamais.findIndex(x => x.id === id);
+    if (index !== -1) dadosRamais[index] = novoDado;
+    else dadosRamais.push(novoDado);
 
     localStorage.setItem('cache_fc_ramais', JSON.stringify(dadosRamais));
     alert("✅ Dados salvos com sucesso!");
@@ -150,45 +181,40 @@ function saveData() {
 }
 
 function prepareAdd() {
-    // Exigência da senha específica conforme solicitado
-    const senha = prompt("🔒 Digite a senha administrativa para ADICIONAR:");
-    
-    if (senha === "APPADM") {
+    if (checkAuth()) {
         document.getElementById('form-id').value = "";
         document.getElementById('form-nome').value = "";
         document.getElementById('form-setor').value = "";
         document.getElementById('form-ramal').value = "";
-        document.getElementById('titulo-form').innerText = "➕ Novo Ramal";
+        const t = document.getElementById('titulo-form');
+        if(t) t.innerText = "➕ Novo Ramal";
         switchView('form');
-    } else if (senha !== null) {
-        alert("❌ Senha incorreta! Acesso negado.");
     }
 }
 
 function prepareEdit(id) {
-    const senha = prompt("🔒 Digite a senha administrativa para EDITAR:");
-    if (senha === "APPADM") {
+    if (checkAuth()) {
         const item = dadosRamais.find(r => r.id == id);
         if (!item) return;
         document.getElementById('form-id').value = item.id;
-        document.getElementById('form-nome').value = item.nome;
-        document.getElementById('form-setor').value = item.setor;
-        document.getElementById('form-ramal').value = item.ramal;
-        document.getElementById('titulo-form').innerText = "📝 Editar Ramal";
+        document.getElementById('form-nome').value = decodificar(item.nome);
+        document.getElementById('form-setor').value = decodificar(item.setor);
+        document.getElementById('form-ramal').value = decodificar(item.ramal);
+        const t = document.getElementById('titulo-form');
+        if(t) t.innerText = "📝 Editar Ramal";
         switchView('form', true); 
-    } else if (senha !== null) alert("❌ Senha incorreta!");
+    }
 }
 
 function confirmDelete(id) {
-    const senha = prompt("🔒 Digite a senha administrativa para EXCLUIR:");
-    if (senha === "APPADM") {
+    if (checkAuth()) {
         if(confirm("Deseja realmente excluir este ramal?")) {
             dadosRamais = dadosRamais.filter(r => r.id !== id);
             localStorage.setItem('cache_fc_ramais', JSON.stringify(dadosRamais));
             renderTable();
             alert("✅ Excluído!");
         }
-    } else if (senha !== null) alert("❌ Senha incorreta!");
+    }
 }
 
 // --- UTILITÁRIOS ---
