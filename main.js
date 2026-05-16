@@ -80,11 +80,15 @@ function switchView(view, skipMenu = false) {
 
 function fetchData() {
     const cache = localStorage.getItem('cache_fc_ramais');
-    if (cache) { 
+    
+    // Se o cache existir e NÃO for uma array vazia "[]"
+    if (cache && cache !== "[]") { 
         dadosRamais = JSON.parse(cache); 
-    } else if (window.LISTA_MESTRA) {
-        dadosRamais = window.LISTA_MESTRA;
+    } else if (window.LISTA_MESTRA && window.LISTA_MESTRA.length > 0) {
+        // SE ALGUÉM APAGOU: O sistema pega a lista original do config.js e injeta de volta!
+        dadosRamais = [...window.LISTA_MESTRA];
         localStorage.setItem('cache_fc_ramais', JSON.stringify(dadosRamais));
+        console.warn("⚠️ LocalStorage estava vazio! Dados do config.js injetados automaticamente.");
     }
     renderTable(); 
 }
@@ -92,6 +96,12 @@ function fetchData() {
 function renderTable(filtro = "") {
     const corpo = document.getElementById('corpoTabela');
     if (!corpo) return;
+
+    // ATUALIZA O CONTADOR NA TELA COM O TOTAL DO ARRAY
+    const contador = document.getElementById('contador-ramais');
+    if (contador) {
+        contador.innerText = dadosRamais.length;
+    }
 
     const termo = filtro.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").trim();
 
@@ -142,7 +152,6 @@ function checkAuth() {
     const senha = prompt("🔒 Digite a senha administrativa:");
     if (senha === null) return false;
     
-    // Codifica o que você digitou e compara com os códigos S1 ou S2
     const sC = codificar(senha);
     if (sC === S1 || sC === S2) {
         return true;
@@ -171,11 +180,21 @@ function saveData() {
     };
 
     const index = dadosRamais.findIndex(x => x.id === id);
-    if (index !== -1) dadosRamais[index] = novoDado;
-    else dadosRamais.push(novoDado);
+    if (index !== -1) {
+        dadosRamais[index] = novoDado;
+    } else {
+        dadosRamais.push(novoDado);
+    }
 
     localStorage.setItem('cache_fc_ramais', JSON.stringify(dadosRamais));
     alert("✅ Dados salvos com sucesso!");
+    
+    // Limpa o formulário após salvar
+    document.getElementById('form-id').value = "";
+    document.getElementById('form-nome').value = "";
+    document.getElementById('form-setor').value = "";
+    document.getElementById('form-ramal').value = "";
+
     renderTable();
     switchView('consulta');
 }
@@ -217,6 +236,28 @@ function confirmDelete(id) {
     }
 }
 
+// --- FUNÇÃO GLOBAL PARA CADASTRO VIA CONSOLE/SCRIPT EXTERNO ---
+window.cadastrarNovoRamal = function(setor, nome, ramal) {
+    if (!setor || !nome || !ramal) {
+        console.error("⚠️ Erro: Preencha todos os parâmetros (setor, nome, ramal)");
+        return null;
+    }
+
+    const novoDado = {
+        id: self.crypto.randomUUID(),
+        nome: codificar(nome.toUpperCase().trim()),
+        setor: codificar(setor.toUpperCase().trim()),
+        ramal: codificar(ramal.trim())
+    };
+
+    dadosRamais.push(novoDado);
+    localStorage.setItem('cache_fc_ramais', JSON.stringify(dadosRamais));
+    renderTable();
+
+    console.log(`✅ ${nome} cadastrado com sucesso no Array e LocalStorage!`);
+    return novoDado;
+};
+
 // --- UTILITÁRIOS ---
 
 function toggleMenu() {
@@ -232,3 +273,15 @@ function toggleModal(show) {
     const m = document.getElementById('modalAcidente');
     if (m) m.style.display = show ? 'flex' : 'none';
 }
+// --- PROTEÇÃO CONTRA LIMPEZA DO LOCALSTORAGE ---
+window.addEventListener('storage', (e) => {
+    // Se a chave dos ramais foi apagada ou modificada externamente
+    if (e.key === 'cache_fc_ramais' && (!e.newValue || e.newValue === "[]")) {
+        if (window.LISTA_MESTRA && window.LISTA_MESTRA.length > 0) {
+            dadosRamais = [...window.LISTA_MESTRA];
+            localStorage.setItem('cache_fc_ramais', JSON.stringify(dadosRamais));
+            renderTable();
+            console.error("🚨 Detetada tentativa de apagar os dados! Sistema restaurado com config.js.");
+        }
+    }
+});
