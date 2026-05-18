@@ -7,11 +7,12 @@
     --fc-white: #ffffff;
     --fc-bg: #f1f9f1;
 }
+
 #titletop{
     color: white;
     font-weight: 700;
-    
 }
+
 .section-title {
     text-align: center;
     font-size: clamp(1.4rem, 4vw, 2.2rem); /* Responsividade cirúrgica no título */
@@ -60,7 +61,7 @@ body::before {
 }
 
 .header-brand {
-    background:rgb(88, 88, 88);
+    background: rgb(88, 88, 88);
     padding: clamp(10px, 3vw, 15px) clamp(10px, 4vw, 20px);
     border-bottom: 3px solid var(--fc-yellow);
     display: flex;
@@ -83,9 +84,19 @@ body::before {
 }
 
 .menu-icon {
-    position: absolute; right: 15px; top: 50%; transform: translateY(-50%);
-    background: var(--fc-yellow); border: none; padding: clamp(6px, 2vw, 8px); border-radius: 6px;
-    cursor: pointer; z-index: 1100; display: flex; flex-direction: column; gap: 4px;
+    position: absolute; 
+    right: 15px; 
+    top: 50%; 
+    transform: translateY(-50%);
+    background: var(--fc-yellow); 
+    border: none; 
+    padding: clamp(6px, 2vw, 8px); 
+    border-radius: 6px;
+    cursor: pointer; 
+    z-index: 1100; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 4px;
 }
 
 .menu-icon .bar { 
@@ -104,13 +115,20 @@ body::before {
 }
 
 /* ==========================================================================
-   SIDEBAR E MEDIA PLAYER
+   SIDEBAR E MEDIA PLAYER (CORRIGIDO)
    ========================================================================== */
 .sidebar {
-    position: fixed; top: 0; right: -280px; width: min(280px, 85vw); /* Impede que quebre em celulares ultra-pequenos */
-    height: 100vh; background: var(--fc-primary-dark) !important;
-    z-index: 5000; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    display: flex; flex-direction: column; box-shadow: -5px 0 15px rgba(0,0,0,0.3);
+    position: fixed; 
+    top: 0; 
+    right: -300px; /* Alinhado estritamente com a largura oculta para evitar vazamentos */
+    width: min(300px, 85vw); 
+    height: 100vh; 
+    background:rgb(88, 88, 88);
+    z-index: 9990; /* Superior aos cards/widgets e tabelas */
+    transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex; 
+    flex-direction: column; 
+    box-shadow: -5px 0 15px rgba(0,0,0,0.3);
 }
 
 .sidebar.active { 
@@ -118,14 +136,25 @@ body::before {
 }
 
 .sidebar-header {
-    padding: 40px 20px 20px; color: var(--fc-yellow); font-weight: 800;
-    font-size: clamp(16px, 5vw, 18px); text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding: 40px 20px 20px; 
+    color: var(--fc-yellow); 
+    font-weight: 800;
+    font-size: clamp(16px, 5vw, 18px); 
+    text-align: center; 
+    border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 
 .sidebar-item {
-    padding: 18px 25px; color: white !important; cursor: pointer;
-    font-size: clamp(13px, 4vw, 15px); font-weight: 500; display: flex; align-items: center;
-    gap: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); transition: 0.2s;
+    padding: 18px 25px; 
+    color: white !important; 
+    cursor: pointer;
+    font-size: clamp(13px, 4vw, 15px); 
+    font-weight: 500; 
+    display: flex; 
+    align-items: center;
+    gap: 15px; 
+    border-bottom: 1px solid rgba(255,255,255,0.05); 
+    transition: 0.2s;
 }
 
 .sidebar-item:hover { 
@@ -135,7 +164,7 @@ body::before {
 
 .mp-container {
     background: rgba(255, 255, 255, 0.05);
-    margin: 115px;
+    margin: 20px 15px; /* Reduzido de 115px para margens proporcionais dentro do menu */
     padding: 12px;
     border-radius: 10px;
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -240,7 +269,7 @@ body::before {
 
 .logout-btn { 
     width: 100%; 
-    padding: clamp(10px, 3vw, 14px); /* Botão adaptável com clamp */
+    padding: clamp(10px, 3vw, 14px); 
     font-size: clamp(13px, 3.5vw, 16px);
     background: var(--fc-accent); 
     color: white; 
@@ -256,9 +285,12 @@ body::before {
 .overlay { 
     display: none; 
     position: fixed; 
-    top: 0; left: 0; width: 100%; height: 100%; 
+    top: 0; 
+    left: 0; 
+    width: 100vw; 
+    height: 100vh; 
     background: rgba(0,0,0,0.6); 
-    z-index: 4500; 
+    z-index: 9980; /* Posicionado cirurgicamente logo abaixo da sidebar */
 }
 
 .overlay.active { 
@@ -452,7 +484,7 @@ body::before {
 }
 
 .calendar-header {
-    background:rgb(88, 88, 88);
+    background: rgb(88, 88, 88);
     color: var(--fc-white);
     padding: 15px;
     text-align: center;
@@ -562,7 +594,7 @@ body::before {
    ========================================================================== */
 .footer-fixed { 
     flex-shrink: 0; 
-    background:rgb(88, 88, 88); 
+    background: rgb(88, 88, 88); 
     color: white; 
     text-align: center; 
     padding: 12px 0; 
