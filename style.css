@@ -7,7 +7,11 @@
     --fc-white: #ffffff;
     --fc-bg: #f1f9f1;
 }
-
+#titletop{
+    color: white;
+    font-weight: 700;
+    
+}
 .section-title {
     text-align: center;
     font-size: clamp(1.4rem, 4vw, 2.2rem); /* Responsividade cirúrgica no título */
@@ -56,7 +60,7 @@ body::before {
 }
 
 .header-brand {
-    background: var(--fc-primary);
+    background:rgb(88, 88, 88);
     padding: clamp(10px, 3vw, 15px) clamp(10px, 4vw, 20px);
     border-bottom: 3px solid var(--fc-yellow);
     display: flex;
@@ -448,7 +452,7 @@ body::before {
 }
 
 .calendar-header {
-    background: var(--fc-primary);
+    background:rgb(88, 88, 88);
     color: var(--fc-white);
     padding: 15px;
     text-align: center;
@@ -558,7 +562,7 @@ body::before {
    ========================================================================== */
 .footer-fixed { 
     flex-shrink: 0; 
-    background: var(--fc-primary-dark); 
+    background:rgb(88, 88, 88); 
     color: white; 
     text-align: center; 
     padding: 12px 0; 
