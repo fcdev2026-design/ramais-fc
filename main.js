@@ -1,24 +1,47 @@
 /* ==========================================================================
-   5. NÚCLEO OPERACIONAL (MAIN) - VERSÃO PROTEGIDA COM SIDEBAR
+   5. NÚCLEO OPERACIONAL (MAIN) - VERSÃO PROTEGIDA COM SIDEBAR E ANTI-CACHE
    ========================================================================== */
 
 let dadosRamais = []; 
 
 // --- FUNÇÕES DE TRADUÇÃO (BASE64) ---
-const codificar = (str) => btoa(unescape(encodeURIComponent(str)));
+const codificar = (str) => {
+    if (str === null || str === undefined) return "";
+    return btoa(unescape(encodeURIComponent(String(str))));
+};
 
 const decodificar = (str) => {
     if (!str) return "";
     try {
-        return decodeURIComponent(escape(atob(str)));
+        return decodeURIComponent(escape(atob(String(str))));
     } catch (e) {
-        return str; 
+        return String(str); 
     }
 };
 
 // --- SENHAS PROTEGIDAS (Disfarçadas no código) ---
 const S1 = "QVBQQURN"; 
 const S2 = "RkMyMDI2"; 
+
+// --- GERENCIADOR ANTI-CACHE AUTOMÁTICO ---
+function carregarConfigSemCache() {
+    const script = document.createElement('script');
+    // Injeta o timestamp (?t=...) para forçar o navegador a buscar o config.js atualizado do servidor
+    script.src = 'config.js?t=' + Date.now();
+    
+    // Quando o arquivo terminar de carregar e registrar a LISTA_MESTRA, o sistema processa os dados
+    script.onload = () => {
+        console.log("✅ 'config.js' carregado com sucesso via barreira anti-cache.");
+        fetchData();
+    };
+
+    script.onerror = () => {
+        console.error("❌ Erro crítico: Não foi possível carregar o arquivo 'config.js'.");
+        fetchData(); // Tenta carregar o cache local mesmo se falhar
+    };
+
+    document.head.appendChild(script);
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     console.log("🚀 Sistema Operacional Local Iniciado...");
@@ -39,7 +62,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    fetchData();
+    // Inicia a chamada dinâmica do banco de dados local
+    carregarConfigSemCache();
 
     setInterval(() => {
         if (typeof buscarClimaAPI === "function") buscarClimaAPI();
@@ -76,20 +100,37 @@ function switchView(view, skipMenu = false) {
     }
 }
 
-// --- GERENCIAMENTO DE DADOS ---
+// --- GERENCIAMENTO DE DADOS BLINDADO ---
 
 function fetchData() {
+    // Busca a versão dinâmica se existir no config.js, caso contrário adota a padrão "1.1"
+    const VERSAO_SISTEMA = window.VERSAO_ATUAL_LISTA || "1.1"; 
+
     const cache = localStorage.getItem('cache_fc_ramais');
+    const versaoSalva = localStorage.getItem('versao_ramais');
     
-    // Se o cache existir e NÃO for uma array vazia "[]"
-    if (cache && cache !== "[]") { 
+    // Se a versão mudou, se o cache não existe ou está corrompido como vazio
+    if (versaoSalva !== VERSAO_SISTEMA || !cache || cache === "[]") { 
+        console.warn("🚨 Nova versão ou inconsistência detectada! Forçando sincronização...");
+        
+        // Limpa o registro desatualizado do LocalStorage
+        localStorage.removeItem('cache_fc_ramais');
+        
+        if (window.LISTA_MESTRA && window.LISTA_MESTRA.length > 0) {
+            // Injeta a lista fresca que veio do config.js
+            dadosRamais = [...window.LISTA_MESTRA];
+            localStorage.setItem('cache_fc_ramais', JSON.stringify(dadosRamais));
+            localStorage.setItem('versao_ramais', VERSAO_SISTEMA);
+            console.log(`✅ Sincronização concluída: Versão ${VERSAO_SISTEMA} ativada.`);
+        } else {
+            console.error("❌ Erro: A lista mestra do config.js não pôde ser lida no escopo global.");
+            dadosRamais = [];
+        }
+    } else {
+        // Se já está na versão certa, consome direto do armazenamento local do usuário
         dadosRamais = JSON.parse(cache); 
-    } else if (window.LISTA_MESTRA && window.LISTA_MESTRA.length > 0) {
-        // SE ALGUÉM APAGOU: O sistema pega a lista original do config.js e injeta de volta!
-        dadosRamais = [...window.LISTA_MESTRA];
-        localStorage.setItem('cache_fc_ramais', JSON.stringify(dadosRamais));
-        console.warn("⚠️ LocalStorage estava vazio! Dados do config.js injetados automaticamente.");
     }
+    
     renderTable(); 
 }
 
@@ -108,7 +149,7 @@ function renderTable(filtro = "") {
     const filtrados = dadosRamais.filter(i => {
         const nome = decodificar(i.nome || "").toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
         const setor = decodificar(i.setor || "").toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
-        const ramal = decodificar(i.ramal || "").toString();
+        const ramal = decodificar(i.ramal || "").toLowerCase().trim();
         return nome.includes(termo) || setor.includes(termo) || ramal.includes(termo);
     });
 
@@ -247,7 +288,7 @@ window.cadastrarNovoRamal = function(setor, nome, ramal) {
         id: self.crypto.randomUUID(),
         nome: codificar(nome.toUpperCase().trim()),
         setor: codificar(setor.toUpperCase().trim()),
-        ramal: codificar(ramal.trim())
+        ramal: codificar(String(ramal).trim())
     };
 
     dadosRamais.push(novoDado);
@@ -273,9 +314,9 @@ function toggleModal(show) {
     const m = document.getElementById('modalAcidente');
     if (m) m.style.display = show ? 'flex' : 'none';
 }
+
 // --- PROTEÇÃO CONTRA LIMPEZA DO LOCALSTORAGE ---
 window.addEventListener('storage', (e) => {
-    // Se a chave dos ramais foi apagada ou modificada externamente
     if (e.key === 'cache_fc_ramais' && (!e.newValue || e.newValue === "[]")) {
         if (window.LISTA_MESTRA && window.LISTA_MESTRA.length > 0) {
             dadosRamais = [...window.LISTA_MESTRA];
