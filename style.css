@@ -1,6 +1,3 @@
-/* ==========================================================================
-   CONFIGURAÇÕES GLOBAIS E VARIÁVEIS
-   ========================================================================== */
 :root {
     /* CORES PRINCIPAIS */
     --fc-primary: #003399;       /* Azul */
@@ -10,19 +7,21 @@
     --fc-white: #ffffff;
     --fc-bg: #f1f9f1;
 }
-.section-title{
+
+.section-title {
     text-align: center;
-   
+    font-size: clamp(1.4rem, 4vw, 2.2rem); /* Responsividade cirúrgica no título */
+    margin: 15px 0;
 }
 
 /* LAYOUT BASE */
-html, body { 
-    height: 100vh; 
-    margin: 0; 
-    overflow: hidden; 
-    display: flex; 
+html, body {
+    height: 100vh;
+    margin: 0;
+    overflow: hidden;
+    display: flex;
     flex-direction: column;
-    font-family: 'Inter', sans-serif; 
+    font-family: 'Inter', sans-serif;
     background-color: var(--fc-bg);
     background-size: 100% 100%;
     background-position: center;
@@ -41,150 +40,368 @@ body::before {
 /* ==========================================================================
    COMPONENTES DE INTERFACE (HEADER, MENU, MARQUEE)
    ========================================================================== */
-.fixed-top-container { flex-shrink: 0; z-index: 1000; }
-
-.weather-bar { 
-    background: var(--fc-white); 
-    padding: 8px; 
-    text-align: center; 
-    font-size: 12px; 
-    font-weight: 700; 
-    color: var(--fc-primary); 
-    border-bottom: 1px solid #ddd; 
+.fixed-top-container { 
+    flex-shrink: 0; 
+    z-index: 1000; 
 }
 
-.header-brand { 
-    background: var(--fc-primary); 
-    padding: 15px 20px; 
-    border-bottom: 3px solid var(--fc-yellow); 
-    display: flex; 
-    justify-content: center; 
-    align-items: center; 
+.weather-bar {
+    background: var(--fc-white);
+    padding: 8px;
+    text-align: center;
+    font-size: clamp(10px, 2.5vw, 12px); /* Ajuste de texto fluído */
+    font-weight: 700;
+    color: var(--fc-primary);
+    border-bottom: 1px solid #ddd;
+}
+
+.header-brand {
+    background: var(--fc-primary);
+    padding: clamp(10px, 3vw, 15px) clamp(10px, 4vw, 20px);
+    border-bottom: 3px solid var(--fc-yellow);
+    display: flex;
+    justify-content: center;
+    align-items: center;
     position: relative;
 }
 
-.brand-name img { height: 40px; }
-.brand-name span { display: block; color: var(--fc-white); font-size: 12px; letter-spacing: 2px; text-align: center; margin-top: 4px; }
+.brand-name img { 
+    height: clamp(30px, 8vw, 40px); /* Logo diminui proporcionalmente em telas pequenas */
+}
 
-.menu-icon { 
+.brand-name span { 
+    display: block; 
+    color: var(--fc-white); 
+    font-size: clamp(10px, 2.5vw, 12px); 
+    letter-spacing: 2px; 
+    text-align: center; 
+    margin-top: 4px; 
+}
+
+.menu-icon {
     position: absolute; right: 15px; top: 50%; transform: translateY(-50%);
-    background: var(--fc-yellow); border: none; padding: 8px; border-radius: 6px; 
+    background: var(--fc-yellow); border: none; padding: clamp(6px, 2vw, 8px); border-radius: 6px;
     cursor: pointer; z-index: 1100; display: flex; flex-direction: column; gap: 4px;
 }
-.menu-icon .bar { width: 22px; height: 3px; background: var(--fc-primary); border-radius: 2px; }
 
-.marquee-info { background:rgb(251, 252, 250); color: var(--fc-primary-dark); font-size: 15px; font-weight: 500; padding: 5px 0; }
+.menu-icon .bar { 
+    width: clamp(18px, 5vw, 22px); 
+    height: 3px; 
+    background: var(--fc-primary); 
+    border-radius: 2px; 
+}
+
+.marquee-info { 
+    background: rgb(251, 252, 250); 
+    color: var(--fc-primary-dark); 
+    font-size: clamp(12px, 3.5vw, 15px); 
+    font-weight: 500; 
+    padding: 5px 0; 
+}
 
 /* ==========================================================================
    SIDEBAR E MEDIA PLAYER
    ========================================================================== */
-.sidebar { 
-    position: fixed; top: 0; right: -280px; width: 280px; 
-    height: 100vh; background: var(--fc-primary-dark) !important; 
-    z-index: 5000; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+.sidebar {
+    position: fixed; top: 0; right: -280px; width: min(280px, 85vw); /* Impede que quebre em celulares ultra-pequenos */
+    height: 100vh; background: var(--fc-primary-dark) !important;
+    z-index: 5000; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex; flex-direction: column; box-shadow: -5px 0 15px rgba(0,0,0,0.3);
 }
-.sidebar.active { right: 0; }
 
-.sidebar-header { 
-    padding: 40px 20px 20px; color: var(--fc-yellow); font-weight: 800; 
-    font-size: 18px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1);
+.sidebar.active { 
+    right: 0; 
 }
 
-.sidebar-item { 
-    padding: 18px 25px; color: white !important; cursor: pointer; 
-    font-size: 15px; font-weight: 500; display: flex; align-items: center; 
+.sidebar-header {
+    padding: 40px 20px 20px; color: var(--fc-yellow); font-weight: 800;
+    font-size: clamp(16px, 5vw, 18px); text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.sidebar-item {
+    padding: 18px 25px; color: white !important; cursor: pointer;
+    font-size: clamp(13px, 4vw, 15px); font-weight: 500; display: flex; align-items: center;
     gap: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); transition: 0.2s;
 }
-.sidebar-item:hover { background: rgba(255,255,255,0.1); color: var(--fc-yellow) !important; }
+
+.sidebar-item:hover { 
+    background: rgba(255,255,255,0.1); 
+    color: var(--fc-yellow) !important; 
+}
 
 .mp-container {
     background: rgba(255, 255, 255, 0.05);
-    margin: 15px;
+    margin: 115px;
     padding: 12px;
     border-radius: 10px;
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
-.btn-back{
-    border-radius: 50PX;
+
+.btn-back {
+    border-radius: 50px;
+    font-size: clamp(12px, 3vw, 15px);
+    padding: clamp(8px, 2vw, 12px);
 }
-.mp-info { color: var(--fc-yellow); font-size: 11px; font-weight: 700; text-align: center; margin-bottom: 8px; text-transform: uppercase; }
 
-.mp-controls { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 10px; }
-.mp-controls button { background: var(--fc-yellow); border: none; border-radius: 50%; width: 32px; height: 32px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.mp-info { 
+    color: var(--fc-yellow); 
+    font-size: 11px; 
+    font-weight: 700; 
+    text-align: center; 
+    margin-bottom: 8px; 
+    text-transform: uppercase; 
+}
 
-.mp-volume-wrapper { width: 60px; display: flex; align-items: center; }
-#mp-volume { width: 100%; height: 4px; accent-color: var(--fc-yellow); cursor: pointer; }
+.mp-controls { 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 10px; 
+    margin-bottom: 10px; 
+}
 
-.mp-tabs { display: flex; gap: 4px; margin-bottom: 8px; }
-.mp-tab-btn { flex: 1; background: rgba(255,255,255,0.1); border: none; color: white; font-size: 10px; padding: 4px; border-radius: 4px; cursor: pointer; }
-.mp-tab-btn.active { background: var(--fc-yellow); color: var(--fc-primary-dark); font-weight: 800; }
+.mp-controls button { 
+    background: var(--fc-yellow); 
+    border: none; 
+    border-radius: 50%; 
+    width: 32px; 
+    height: 32px; 
+    cursor: pointer; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+}
 
-.mp-playlist { max-height: 80px; overflow-y: auto; font-size: 11px; background: rgba(0,0,0,0.2); border-radius: 4px; }
-.mp-song-item { padding: 6px 10px; color: #ccc; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05); }
-.mp-song-item:hover { color: var(--fc-yellow); background: rgba(255,255,255,0.05); }
+.mp-volume-wrapper { 
+    width: 60px; 
+    display: flex; 
+    align-items: center; 
+}
 
-.sidebar-footer { margin-top: auto; padding: 25px 20px; border-top: 1px solid rgba(255,255,255,0.1); }
-.logout-btn { width: 100%; padding: 12px; background: var(--fc-accent); color: white; border: none; border-radius: 6px; font-weight: 800; cursor: pointer; }
+#mp-volume { 
+    width: 100%; 
+    height: 4px; 
+    accent-color: var(--fc-yellow); 
+    cursor: pointer; 
+}
+
+.mp-tabs { 
+    display: flex; 
+    gap: 4px; 
+    margin-bottom: 8px; 
+}
+
+.mp-tab-btn { 
+    flex: 1; 
+    background: rgba(255,255,255,0.1); 
+    border: none; 
+    color: white; 
+    font-size: 10px; 
+    padding: 4px; 
+    border-radius: 4px; 
+    cursor: pointer; 
+}
+
+.mp-tab-btn.active { 
+    background: var(--fc-yellow); 
+    color: var(--fc-primary-dark); 
+    font-weight: 800; 
+}
+
+.mp-playlist { 
+    max-height: 80px; 
+    overflow-y: auto; 
+    font-size: 11px; 
+    background: rgba(0,0,0,0.2); 
+    border-radius: 4px; 
+}
+
+.mp-song-item { 
+    padding: 6px 10px; 
+    color: #ccc; 
+    cursor: pointer; 
+    border-bottom: 1px solid rgba(255,255,255,0.05); 
+}
+
+.mp-song-item:hover { 
+    color: var(--fc-yellow); 
+    background: rgba(255,255,255,0.05); 
+}
+
+.sidebar-footer { 
+    margin-top: auto; 
+    padding: 25px 20px; 
+    border-top: 1px solid rgba(255,255,255,0.1); 
+}
+
+.logout-btn { 
+    width: 100%; 
+    padding: clamp(10px, 3vw, 14px); /* Botão adaptável com clamp */
+    font-size: clamp(13px, 3.5vw, 16px);
+    background: var(--fc-accent); 
+    color: white; 
+    border: none; 
+    border-radius: 6px; 
+    font-weight: 800; 
+    cursor: pointer; 
+}
 
 /* ==========================================================================
-   CONTAINER CENTRAL E TABELAS
+   CONTAINER CENTRAL E TABELAS (CORRIGIDO PARA EXIBIÇÃO DE RAMAIS)
    ========================================================================== */
-.overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 4500; }
-.overlay.active { display: block; }
-
-.container { overflow: hidden;
-    flex-grow: 1; overflow-y: auto; width: 90%; max-width: 800px; 
-    margin: 15px auto; background: var(--fc-white); border-radius: 12px; 
-    box-shadow: 0 5px 20px rgba(0,0,0,0.1); position: relative; z-index: 10;
+.overlay { 
+    display: none; 
+    position: fixed; 
+    top: 0; left: 0; width: 100%; height: 100%; 
+    background: rgba(0,0,0,0.6); 
+    z-index: 4500; 
 }
 
-.search-container { position: sticky; top: 0; background: var(--fc-white); padding: 20px; z-index: 100; border-bottom: 1px solid #f1f5f9; border-radius: 12px 12px 0 0; }
-#search { width: 100%; padding: 15px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 16px; outline: none; }
-
-.table-ramais { width: 100%; border-collapse: collapse; }
-.row-setor td { padding: 20px 20px 8px; font-weight: 800; color: var(--fc-primary); font-size: 11px; text-transform: uppercase; border-bottom: 2px solid var(--fc-yellow); }
-.item-row td { padding: 15px 20px; border-bottom: 1px solid #f1f5f9; }
-.ramal-badge { 
-    background: var(--fc-yellow); color: var(--fc-primary-dark); padding: 8px 12px; 
-    border-radius: 8px; font-weight: 800; display: inline-flex; align-items: center; gap: 5px;
-    box-shadow: 2px 2px 0px var(--fc-primary); white-space: nowrap;
+.overlay.active { 
+    display: block; 
 }
 
-.table-bus { width: 100%; border-collapse: collapse; table-layout: fixed; }
-.table-bus th { background: #f8fafc; color: var(--fc-primary); padding: 15px 5px; border-bottom: 3px solid var(--fc-yellow); }
-.table-bus td { padding: 12px 5px; text-align: center; border-bottom: 1px solid #eef2f6; font-weight: 600; }
+.container { 
+    flex-grow: 1; 
+    overflow-y: auto; 
+    width: 92%; 
+    max-width: 800px;
+    margin: 10px auto; 
+    background: var(--fc-white); 
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1); 
+    position: relative; 
+    z-index: 10;
+}
 
-/* ==========================================================================
-   WIDGETS LATERAIS E CALENDÁRIO (IMPLEMENTAÇÃO SOLICITADA)
-   ========================================================================== */
-.ad-lateral {
-    position: fixed;
-    top: 130px; /* Ajuste esse valor se o marquee verde for maior/menor */
-    height: calc(100vh - 200px);
-    width: calc((100vw - 840px) / 2); 
-    z-index: 1; 
-    overflow: hidden;
+.search-container { 
+    position: sticky; 
+    top: 0; 
+    background: var(--fc-white); 
+    padding: clamp(12px, 4vw, 20px); 
+    z-index: 100; 
+    border-bottom: 1px solid #f1f5f9; 
+    border-radius: 12px 12px 0 0; 
+}
+
+#search { 
+    width: 100%; 
+    padding: clamp(10px, 3vw, 15px); 
+    border: 2px solid #e2e8f0; 
+    border-radius: 10px; 
+    font-size: clamp(14px, 4vw, 16px); 
+    outline: none; 
+    box-sizing: border-box;
+}
+
+.table-ramais { 
+    width: 100%; 
+    border-collapse: collapse; 
+}
+
+.row-setor td { 
+    padding: 15px 15px 8px; 
+    font-weight: 800; 
+    color: var(--fc-primary); 
+    font-size: clamp(10px, 3vw, 11px); 
+    text-transform: uppercase; 
+    border-bottom: 2px solid var(--fc-yellow); 
+}
+
+/* Flexbox estrutural nas linhas dos ramais adaptado para quebra em celulares */
+.item-row {
     display: flex;
-    transition: width 0.3s ease;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #f1f5f9;
+    padding: clamp(10px, 3vw, 15px) clamp(12px, 4vw, 20px);
+    gap: 15px; /* Espaçamento cirúrgico de segurança */
 }
-/* Container que você já tem, com ajustes de segurança */
+
+.item-row td:first-child {
+    display: block;
+    padding: 0;
+    flex-grow: 1;
+    text-align: left;
+    min-width: 0; /* Permite o encolhimento correto do texto sem empurrar o ramal */
+}
+
+/* Ajusta o tamanho das fontes dos nomes internos e setores de forma responsiva */
+.item-row td:first-child div:first-child {
+    font-size: clamp(13px, 4vw, 16px) !important;
+}
+
+.item-row td:first-child div:nth-child(2) {
+    font-size: clamp(10px, 3vw, 11px) !important;
+}
+
+.item-row td:last-child {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0;
+    flex-shrink: 0; /* CIRÚRGICO: Bloqueia o navegador de espremer ou ocultar a célula do ramal */
+    min-width: fit-content;
+}
+
+.ramal-badge {
+    background: var(--fc-yellow); 
+    color: var(--fc-primary-dark); 
+    padding: clamp(6px, 2vw, 8px) clamp(10px, 3vw, 14px);
+    border-radius: 8px; 
+    font-weight: 800; 
+    display: inline-flex; 
+    align-items: center; 
+    gap: 6px;
+    box-shadow: 2px 2px 0px var(--fc-primary); 
+    white-space: nowrap; /* Impede quebra do texto do ramal interna */
+    font-size: clamp(11px, 3.5vw, 13px);
+}
+
+.table-bus { 
+    width: 100%; 
+    border-collapse: collapse; 
+    table-layout: fixed; 
+}
+
+.table-bus th { 
+    background: #f8fafc; 
+    color: var(--fc-primary); 
+    padding: 12px 5px; 
+    font-size: clamp(11px, 3vw, 14px);
+    border-bottom: 3px solid var(--fc-yellow); 
+}
+
+.table-bus td { 
+    padding: 10px 5px; 
+    text-align: center; 
+    border-bottom: 1px solid #eef2f6; 
+    font-weight: 600; 
+    font-size: clamp(11px, 3vw, 13px);
+}
+
+/* ==========================================================================
+   WIDGETS LATERAIS E CALENDÁRIO
+   ========================================================================== */
 .ad-lateral {
     position: fixed;
     top: 130px;
     height: calc(100vh - 200px);
-    width: calc((100vw - 840px) / 2); 
-    z-index: 1; 
+    width: calc((100vw - 840px) / 2);
+    z-index: 1;
     overflow: hidden;
     display: flex;
     transition: all 0.3s ease;
 }
 
-.ad-esquerda { 
-    left: 10px; 
+.ad-esquerda {
+    left: 10px;
 }
 
-/* Estilização do Card com fontes flexíveis */
+.ad-direita { 
+    right: 10px; 
+}
+
 .card-copa-familia {
     background: linear-gradient(180deg, #009c3b 0%, #ffdf00 100%);
     color: #002776;
@@ -198,12 +415,11 @@ body::before {
     width: 100%;
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    box-sizing: border-box; /* Garante que o padding não aumente a largura */
+    box-sizing: border-box;
 }
 
-/* Ajuste de texto para caber em colunas estreitas */
 .card-copa-familia h2 {
-    font-size: clamp(1rem, 2vw, 1.5rem); /* Tamanho dinâmico */
+    font-size: clamp(1rem, 2vw, 1.5rem);
     margin: 10px 0;
     line-height: 1.1;
 }
@@ -213,37 +429,13 @@ body::before {
     margin: 5px 0;
 }
 
-/* --- REGRAS DE RESPONSIVIDADE --- */
-
-/* 1. Esconder em tablets e celulares (onde não há espaço lateral) */
-@media (max-width: 1024px) {
-    .ad-lateral {
-        display: none; /* Em telas menores que 1024px, o banner some para não cobrir o conteúdo */
-    }
-}
-
-/* 2. Ajuste para telas muito grandes (UltraWide) */
-@media (min-width: 1800px) {
-    .ad-lateral {
-        width: 300px; /* Limita a largura em telas gigantes para não ficar exagerado */
-    }
-}
-.ad-esquerda { left: 10px;
-
-}
-.ad-direita { right: 10px; }
-
-/* ESTILO DO WIDGET DE CALENDÁRIO NA DIREITA */
-/* Faz a imagem ocupar 100% da largura do card e ajustar a altura */
 .img-ad {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Faz a imagem cobrir o espaço sem distorcer */
-    border-radius: 12px; /* Mantém o arredondamento igual ao card */
+    object-fit: cover;
+    border-radius: 12px;
 }
 
-/* Ajuste importante: No seu CSS, a regra .ad-direita .calendar-widget 
-   está restringindo o estilo apenas à direita. Altere para: */
 .ad-lateral .calendar-widget {
     width: 100%;
     height: 100%;
@@ -310,9 +502,14 @@ body::before {
     border-bottom: 1px solid #e2e8f0;
 }
 
-/* Custom Scrollbar */
-.holidays-panel::-webkit-scrollbar { width: 4px; }
-.holidays-panel::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+.holidays-panel::-webkit-scrollbar { 
+    width: 4px; 
+}
+
+.holidays-panel::-webkit-scrollbar-thumb { 
+    background: #cbd5e1; 
+    border-radius: 10px; 
+}
 
 .calendar-widget h4 {
     margin: 0 0 10px 0;
@@ -324,7 +521,12 @@ body::before {
     text-transform: uppercase;
 }
 
-#holidays-list { list-style: none; padding: 0; margin: 0; }
+#holidays-list { 
+    list-style: none; 
+    padding: 0; 
+    margin: 0; 
+}
+
 #holidays-list li {
     font-size: 12px;
     padding: 8px 0;
@@ -354,22 +556,68 @@ body::before {
 /* ==========================================================================
    MODAL ACIDENTE E FOOTER
    ========================================================================== */
-.footer-fixed { flex-shrink: 0; background: var(--fc-primary-dark); color: white; text-align: center; padding: 12px 0; font-size: 12px; border-top: 3px solid var(--fc-yellow); }
+.footer-fixed { 
+    flex-shrink: 0; 
+    background: var(--fc-primary-dark); 
+    color: white; 
+    text-align: center; 
+    padding: 12px 0; 
+    font-size: clamp(10px, 3.5vw, 12px); 
+    border-top: 3px solid var(--fc-yellow); 
+}
 
 .modal-acidente {
     display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
     background: rgba(0, 0, 0, 0.9); z-index: 99999; justify-content: center; align-items: center; padding: 20px;
+    box-sizing: border-box;
 }
 
 .modal-acidente-content {
-    background: var(--fc-white); padding: 30px; border-radius: 20px; text-align: center;
+    background: var(--fc-white); padding: clamp(15px, 5vw, 30px); border-radius: 20px; text-align: center;
     max-width: 400px; width: 100%; border-top: 8px solid var(--fc-accent);
+    box-sizing: border-box;
 }
 
-.btn-close-acidente { background: var(--fc-accent); color: white; border: none; padding: 15px; border-radius: 10px; font-weight: 800; width: 100%; cursor: pointer; }
+.btn-close-acidente { 
+    background: var(--fc-accent); 
+    color: white; 
+    border: none; 
+    padding: clamp(10px, 3.5vw, 15px); /* Botão interno responsivo */
+    border-radius: 10px; 
+    font-weight: 800; 
+    width: 100%; 
+    cursor: pointer; 
+    font-size: clamp(14px, 4vw, 16px);
+}
 
-/* RESPONSIVIDADE */
+/* ==========================================================================
+   RESPONSIVIDADE GERAL AUTOMÁTICA
+   ========================================================================== */
 @media (max-width: 1150px) {
-    .ad-lateral { display: none !important; }
-    .container { width: 95%; }
+    .ad-lateral { 
+        display: none !important; 
+    }
+    .container { 
+        width: 94%; 
+        margin: 10px auto;
+    }
+}
+
+/* Ajustes finos adicionais e quebra de bloco para smartphones (limite mínimo de 350px) */
+@media (max-width: 480px) {
+    .item-row {
+        flex-direction: column; /* Move cirurgicamente o ramal para baixo do nome */
+        align-items: flex-start; /* Alinha o conteúdo à esquerda */
+        gap: 8px;
+        padding: 12px 15px;
+    }
+
+    .item-row td:first-child {
+        width: 100%;
+    }
+
+    .item-row td:last-child {
+        width: 100%;
+        justify-content: flex-start; /* Força a badge a aparecer perfeitamente sem sumir */
+    }
 }
