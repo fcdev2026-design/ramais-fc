@@ -1,14 +1,17 @@
+/* ==========================================================================
+   VARIÁVEIS E CONFIGURAÇÕES GERAIS
+   ========================================================================== */
 :root {
     /* CORES PRINCIPAIS */
     --fc-primary: #003399;       /* Azul */
     --fc-primary-dark: #002673;  /* Azul Escuro */
-    --fc-yellow: #FFD400;        /* Amarelo (Ramais e Destaques) */
+    --fc-yellow: #e4e138;        /* Amarelo (Ramais e Destaques) */
     --fc-accent: #ED1C24;        /* Vermelho (Sair e Acidente) */
     --fc-white: #ffffff;
     --fc-bg: #f1f9f1;
 }
 
-#titletop{
+#titletop {
     color: white;
     font-weight: 700;
 }
@@ -114,8 +117,28 @@ body::before {
     padding: 5px 0; 
 }
 
+.scroll-container {
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.scroll-text {
+    display: inline-block;
+    padding-left: 100%;
+    font-size: 18px;
+    text-transform: uppercase;
+    font-weight: 700;
+    animation: marquee-moderno 15s linear infinite;
+}
+
+@keyframes marquee-moderno {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
+}
+
 /* ==========================================================================
-   SIDEBAR E MEDIA PLAYER (CORRIGIDO)
+   SIDEBAR E MEDIA PLAYER
    ========================================================================== */
 .sidebar {
     position: fixed; 
@@ -123,7 +146,7 @@ body::before {
     right: -300px; /* Alinhado estritamente com a largura oculta para evitar vazamentos */
     width: min(300px, 85vw); 
     height: 100vh; 
-    background:rgb(88, 88, 88);
+    background: rgb(88, 88, 88);
     z-index: 9990; /* Superior aos cards/widgets e tabelas */
     transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex; 
@@ -164,7 +187,7 @@ body::before {
 
 .mp-container {
     background: rgba(255, 255, 255, 0.05);
-    margin: 20px 15px; /* Reduzido de 115px para margens proporcionais dentro do menu */
+    margin: 20px 15px; 
     padding: 12px;
     border-radius: 10px;
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -280,7 +303,7 @@ body::before {
 }
 
 /* ==========================================================================
-   CONTAINER CENTRAL E TABELAS (CORRIGIDO PARA EXIBIÇÃO DE RAMAIS)
+   CONTAINER CENTRAL E ÁREA DE BUSCA (UNIFICADO)
    ========================================================================== */
 .overlay { 
     display: none; 
@@ -302,14 +325,17 @@ body::before {
     overflow-y: auto; 
     width: 92%; 
     max-width: 800px;
-    margin: 10px auto; 
-    background: var(--fc-white); 
+    margin: 0px auto; 
+    background-image: url("./bgramal.png");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
     border-radius: 12px;
     box-shadow: 0 5px 20px rgba(0,0,0,0.1); 
     position: relative; 
     z-index: 10;
 }
 
+/* Container de busca fixado/topo unificado */
 .search-container { 
     position: sticky; 
     top: 0; 
@@ -320,38 +346,84 @@ body::before {
     border-radius: 12px 12px 0 0; 
 }
 
-#search { 
-    width: 100%; 
-    padding: clamp(10px, 3vw, 15px); 
-    border: 2px solid #e2e8f0; 
-    border-radius: 10px; 
-    font-size: clamp(14px, 4vw, 16px); 
-    outline: none; 
+/* Centraliza o bloco horizontalmente e define a largura idêntica à imagem */
+.search-top-wrapper {
+    width: 100%;
+    height: 30px;
+    max-width: 730px; 
+    margin: 20px auto 10px auto; 
+    padding: 0 10px;
     box-sizing: border-box;
+    display: flex;
+    justify-content: center; 
 }
 
+
+
+/* Input Único e Consolidado (Removeu regras duplicadas espalhadas) */
+
+
+#search {
+    position: absolute;
+    background-color: white;
+    border-radius: 5px;
+    
+    /* Mantém centralizado horizontalmente no mesmo lugar */
+    left: 50%;
+    transform: translateX(-50%);
+
+    /* CORREÇÃO DO TOPO (Fixado em pixels para não subir) */
+    top: 17px; /* Teste valores entre 15px e 30px até encaixar no desenho */
+    height: clamp(30px, 4vw, 30px);      
+
+    /* LARGURA PROPORCIONAL À IMAGEM DE FUNDO */
+    width: clamp(180px, 45%, 353px);    
+}
+/* ==========================================================================
+   TABELAS E COMPONENTES INTERNOS (RAMAIS / COMPONENTES)
+   ========================================================================== */
 .table-ramais { 
     width: 100%; 
     border-collapse: collapse; 
+    color:white;
+}
+
+/* Linhas e Células dos Setores Agrupadas */
+.row-setor {
+    background-color: #ffffff;
 }
 
 .row-setor td { 
     padding: 15px 15px 8px; 
-    font-weight: 800; 
+    font-weight: 700; 
     color: var(--fc-primary); 
-    font-size: clamp(10px, 3vw, 11px); 
+    font-size: clamp(10px, 3vw, 13px); 
     text-transform: uppercase; 
     border-bottom: 2px solid var(--fc-yellow); 
+}
+
+.col-setor-titulo {
+    text-align: center;       
+    vertical-align: middle;
+    font-weight: 300;          
+    font-size: 8px;
+    color: #1e3a8a;            
+    padding: 10px 16px;        
+    letter-spacing: 0.5px;     
+    border-top: 2px solid #e2e8f0;   
+    border-bottom: 2px solid #e2e8f0;
 }
 
 /* Flexbox estrutural nas linhas dos ramais adaptado para quebra em celulares */
 .item-row {
     display: flex;
+    border-radius: 5px;
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid #f1f5f9;
     padding: clamp(10px, 3vw, 15px) clamp(12px, 4vw, 20px);
-    gap: 15px; /* Espaçamento cirúrgico de segurança */
+    gap: 15px; 
+    background-color: rgb(88, 88, 88);
 }
 
 .item-row td:first-child {
@@ -359,7 +431,7 @@ body::before {
     padding: 0;
     flex-grow: 1;
     text-align: left;
-    min-width: 0; /* Permite o encolhimento correto do texto sem empurrar o ramal */
+    min-width: 0; 
 }
 
 /* Ajusta o tamanho das fontes dos nomes internos e setores de forma responsiva */
@@ -376,7 +448,7 @@ body::before {
     align-items: center;
     justify-content: flex-end;
     padding: 0;
-    flex-shrink: 0; /* CIRÚRGICO: Bloqueia o navegador de espremer ou ocultar a célula do ramal */
+    flex-shrink: 0; 
     min-width: fit-content;
 }
 
@@ -390,10 +462,11 @@ body::before {
     align-items: center; 
     gap: 6px;
     box-shadow: 2px 2px 0px var(--fc-primary); 
-    white-space: nowrap; /* Impede quebra do texto do ramal interna */
-    font-size: clamp(11px, 3.5vw, 13px);
+    white-space: nowrap; 
+    font-size: clamp(11px, 3.5vw, 18px);
 }
 
+/* TABELA DE ÔNIBUS */
 .table-bus { 
     width: 100%; 
     border-collapse: collapse; 
@@ -416,13 +489,45 @@ body::before {
     font-size: clamp(11px, 3vw, 13px);
 }
 
+/* --- BOTÕES DE AÇÃO EXTRA COMPACTOS --- */
+.col-acoes {
+    display: inline-flex; 
+    flex-wrap: nowrap;    
+    gap: 4px;             
+    align-items: center;
+}
+
+.btn-acao {
+    border: none;
+    padding: 2px 6px;   
+    font-size: 9px;     
+    font-weight: 700;
+    text-transform: uppercase;
+    border-radius: 3px; 
+    cursor: pointer;
+    white-space: nowrap; 
+    transition: background 0.2s;
+}
+
+.btn-editar {
+    background-color: #eff6ff;
+    color: #2563eb;
+}
+.btn-editar:hover { background-color: #dbeafe; }
+
+.btn-excluir {
+    background-color: #fef2f2;
+    color: #dc2626;
+}
+.btn-excluir:hover { background-color: #fee2e2; }
+
 /* ==========================================================================
    WIDGETS LATERAIS E CALENDÁRIO
    ========================================================================== */
 .ad-lateral {
     position: fixed;
     top: 130px;
-    height: calc(100vh - 200px);
+    height: calc(100vh - 175px);
     width: calc((100vw - 840px) / 2);
     z-index: 1;
     overflow: hidden;
@@ -430,13 +535,8 @@ body::before {
     transition: all 0.3s ease;
 }
 
-.ad-esquerda {
-    left: 10px;
-}
-
-.ad-direita { 
-    right: 10px; 
-}
+.ad-esquerda { left: 10px; }
+.ad-direita { right: 10px; }
 
 .card-copa-familia {
     background: linear-gradient(180deg, #009c3b 0%, #ffdf00 100%);
@@ -538,14 +638,8 @@ body::before {
     border-bottom: 1px solid #e2e8f0;
 }
 
-.holidays-panel::-webkit-scrollbar { 
-    width: 4px; 
-}
-
-.holidays-panel::-webkit-scrollbar-thumb { 
-    background: #cbd5e1; 
-    border-radius: 10px; 
-}
+.holidays-panel::-webkit-scrollbar { width: 4px; }
+.holidays-panel::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
 
 .calendar-widget h4 {
     margin: 0 0 10px 0;
@@ -618,7 +712,7 @@ body::before {
     background: var(--fc-accent); 
     color: white; 
     border: none; 
-    padding: clamp(10px, 3.5vw, 15px); /* Botão interno responsivo */
+    padding: clamp(10px, 3.5vw, 15px); 
     border-radius: 10px; 
     font-weight: 800; 
     width: 100%; 
@@ -627,7 +721,7 @@ body::before {
 }
 
 /* ==========================================================================
-   RESPONSIVIDADE GERAL AUTOMÁTICA
+   RESPONSIVIDADE GERAL
    ========================================================================== */
 @media (max-width: 1150px) {
     .ad-lateral { 
@@ -639,11 +733,10 @@ body::before {
     }
 }
 
-/* Ajustes finos adicionais e quebra de bloco para smartphones (limite mínimo de 350px) */
 @media (max-width: 480px) {
     .item-row {
-        flex-direction: column; /* Move cirurgicamente o ramal para baixo do nome */
-        align-items: flex-start; /* Alinha o conteúdo à esquerda */
+        flex-direction: column; 
+        align-items: flex-start; 
         gap: 8px;
         padding: 12px 15px;
     }
@@ -654,6 +747,6 @@ body::before {
 
     .item-row td:last-child {
         width: 100%;
-        justify-content: flex-start; /* Força a badge a aparecer perfeitamente sem sumir */
+        justify-content: flex-start; 
     }
 }

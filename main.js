@@ -26,10 +26,8 @@ const S2 = "RkMyMDI2";
 // --- GERENCIADOR ANTI-CACHE AUTOMÁTICO ---
 function carregarConfigSemCache() {
     const script = document.createElement('script');
-    // Injeta o timestamp (?t=...) para forçar o navegador a buscar o config.js atualizado do servidor
     script.src = 'config.js?t=' + Date.now();
     
-    // Quando o arquivo terminar de carregar e registrar a LISTA_MESTRA, o sistema processa os dados
     script.onload = () => {
         console.log("✅ 'config.js' carregado com sucesso via barreira anti-cache.");
         fetchData();
@@ -37,7 +35,7 @@ function carregarConfigSemCache() {
 
     script.onerror = () => {
         console.error("❌ Erro crítico: Não foi possível carregar o arquivo 'config.js'.");
-        fetchData(); // Tenta carregar o cache local mesmo se falhar
+        fetchData(); 
     };
 
     document.head.appendChild(script);
@@ -55,6 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setInterval(verificarProximoOnibus, 30000);
     }
 
+    // Gerenciador simplificado do Input de Busca (Sem a label flutuante antiga)
     const campoBusca = document.getElementById('search');
     if (campoBusca) {
         campoBusca.addEventListener('input', (e) => {
@@ -62,7 +61,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Inicia a chamada dinâmica do banco de dados local
     carregarConfigSemCache();
 
     setInterval(() => {
@@ -92,6 +90,16 @@ function switchView(view, skipMenu = false) {
         window.scrollTo(0, 0);
     }
 
+    // 🟢 CORREÇÃO: Esconde a busca no formulário/horários e mostra nas outras telas
+    const campoBusca = document.getElementById('search');
+    if (campoBusca) {
+        if (view === 'form' || view === 'horarios') {
+            campoBusca.style.display = 'none';
+        } else {
+            campoBusca.style.display = 'block';
+        }
+    }
+
     if (!skipMenu) {
         const sidebar = document.getElementById('sidebar');
         if (sidebar && sidebar.classList.contains('active')) {
@@ -103,21 +111,17 @@ function switchView(view, skipMenu = false) {
 // --- GERENCIAMENTO DE DADOS BLINDADO ---
 
 function fetchData() {
-    // Busca a versão dinâmica se existir no config.js, caso contrário adota a padrão "1.1"
     const VERSAO_SISTEMA = window.VERSAO_ATUAL_LISTA || "1.1"; 
 
     const cache = localStorage.getItem('cache_fc_ramais');
     const versaoSalva = localStorage.getItem('versao_ramais');
     
-    // Se a versão mudou, se o cache não existe ou está corrompido como vazio
     if (versaoSalva !== VERSAO_SISTEMA || !cache || cache === "[]") { 
         console.warn("🚨 Nova versão ou inconsistência detectada! Forçando sincronização...");
         
-        // Limpa o registro desatualizado do LocalStorage
         localStorage.removeItem('cache_fc_ramais');
         
         if (window.LISTA_MESTRA && window.LISTA_MESTRA.length > 0) {
-            // Injeta a lista fresca que veio do config.js
             dadosRamais = [...window.LISTA_MESTRA];
             localStorage.setItem('cache_fc_ramais', JSON.stringify(dadosRamais));
             localStorage.setItem('versao_ramais', VERSAO_SISTEMA);
@@ -127,24 +131,29 @@ function fetchData() {
             dadosRamais = [];
         }
     } else {
-        // Se já está na versão certa, consome direto do armazenamento local do usuário
         dadosRamais = JSON.parse(cache); 
     }
     
-    renderTable(); 
+    renderTable(""); 
 }
 
+// --- RENDERIZAÇÃO DA TABELA DINÂMICA ---
 function renderTable(filtro = "") {
     const corpo = document.getElementById('corpoTabela');
     if (!corpo) return;
 
-    // ATUALIZA O CONTADOR NA TELA COM O TOTAL DO ARRAY
     const contador = document.getElementById('contador-ramais');
     if (contador) {
         contador.innerText = dadosRamais.length;
     }
 
     const termo = filtro.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").trim();
+
+    // Se não buscou nada, limpa a tabela completamente
+    if (termo === "") {
+        corpo.innerHTML = "";
+        return;
+    }
 
     const filtrados = dadosRamais.filter(i => {
         const nome = decodificar(i.nome || "").toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
@@ -163,26 +172,39 @@ function renderTable(filtro = "") {
     const setoresOrdenados = Object.keys(grupos).sort();
 
     if (setoresOrdenados.length === 0) {
-        corpo.innerHTML = `<tr><td colspan="2" style="text-align:center; padding: 30px; color: #64748b;">Nenhum ramal encontrado.</td></tr>`;
+        corpo.innerHTML = `<tr><td colspan="4" style="text-align:center; padding: 25px; color: #ef4444; font-size: 12px; font-weight: 600;">Nenhum ramal encontrado.</td></tr>`;
         return;
     }
 
     corpo.innerHTML = setoresOrdenados.map(setor => {
-        const header = `<tr class="row-setor"><td colspan="2">📂 ${setor}</td></tr>`;
-        const itens = grupos[setor].map(p => `
-            <tr class="item-row">
-                <td>
-                    <div style="font-weight:600; color:#1e293b;">${decodificar(p.nome)}</div>
-                    <div style="font-size:11px;color:#64748b;">📍 ${decodificar(p.setor)}</div>
-                    <div style="margin-top:8px;display:flex;gap:15px;">
-                        <span onclick="prepareEdit('${p.id}')" style="color:#2563eb; cursor:pointer; font-size:11px; font-weight:700;">EDITAR</span>
-                        <span onclick="confirmDelete('${p.id}')" style="color:#ef4444; cursor:pointer; font-size:11px; font-weight:700;">EXCLUIR</span>
-                    </div>
-                </td>
-                <td style="text-align:right; vertical-align:middle;">
-                    <span class="ramal-badge">📞 ${decodificar(p.ramal)}</span>
-                </td>
-            </tr>`).join('');
+        const header = `
+            <tr class="row-setor">
+                <td colspan="4" class="col-setor-titulo">📂 ${decodificar(setor)}</td>
+            </tr>
+        `;
+
+        const itens = grupos[setor].map(p => {
+            const nome = decodificar(p.nome);
+            const setorItem = decodificar(p.setor);
+            const ramal = decodificar(p.ramal);
+
+            return `
+                <tr class="item-row">
+                    <td class="col-nome">${nome}</td>
+                    <td class="col-setor">
+                        <span class="setor-badge">📍 ${setorItem}</span>
+                    </td>
+                    <td class="col-acoes">
+                        <button onclick="prepareEdit('${p.id}')" class="btn-acao btn-editar">Editar</button>
+                        <button onclick="confirmDelete('${p.id}')" class="btn-acao btn-excluir">Excluir</button>
+                    </td>
+                    <td class="col-ramal">
+                        <span class="ramal-badge">📞 ${ramal}</span>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+
         return header + itens;
     }).join('');
 }
@@ -230,13 +252,15 @@ function saveData() {
     localStorage.setItem('cache_fc_ramais', JSON.stringify(dadosRamais));
     alert("✅ Dados salvos com sucesso!");
     
-    // Limpa o formulário após salvar
     document.getElementById('form-id').value = "";
     document.getElementById('form-nome').value = "";
     document.getElementById('form-setor').value = "";
     document.getElementById('form-ramal').value = "";
 
-    renderTable();
+    const campoBusca = document.getElementById('search');
+    if (campoBusca) campoBusca.value = "";
+    
+    renderTable("");
     switchView('consulta');
 }
 
@@ -271,13 +295,16 @@ function confirmDelete(id) {
         if(confirm("Deseja realmente excluir este ramal?")) {
             dadosRamais = dadosRamais.filter(r => r.id !== id);
             localStorage.setItem('cache_fc_ramais', JSON.stringify(dadosRamais));
-            renderTable();
+            
+            const campoBusca = document.getElementById('search');
+            const termoAtual = campoBusca ? campoBusca.value : "";
+            renderTable(termoAtual);
+            
             alert("✅ Excluído!");
         }
     }
 }
 
-// --- FUNÇÃO GLOBAL PARA CADASTRO VIA CONSOLE/SCRIPT EXTERNO ---
 window.cadastrarNovoRamal = function(setor, nome, ramal) {
     if (!setor || !nome || !ramal) {
         console.error("⚠️ Erro: Preencha todos os parâmetros (setor, nome, ramal)");
@@ -293,7 +320,9 @@ window.cadastrarNovoRamal = function(setor, nome, ramal) {
 
     dadosRamais.push(novoDado);
     localStorage.setItem('cache_fc_ramais', JSON.stringify(dadosRamais));
-    renderTable();
+    
+    const campoBusca = document.getElementById('search');
+    renderTable(campoBusca ? campoBusca.value : "");
 
     console.log(`✅ ${nome} cadastrado com sucesso no Array e LocalStorage!`);
     return novoDado;
@@ -314,15 +343,3 @@ function toggleModal(show) {
     const m = document.getElementById('modalAcidente');
     if (m) m.style.display = show ? 'flex' : 'none';
 }
-
-// --- PROTEÇÃO CONTRA LIMPEZA DO LOCALSTORAGE ---
-window.addEventListener('storage', (e) => {
-    if (e.key === 'cache_fc_ramais' && (!e.newValue || e.newValue === "[]")) {
-        if (window.LISTA_MESTRA && window.LISTA_MESTRA.length > 0) {
-            dadosRamais = [...window.LISTA_MESTRA];
-            localStorage.setItem('cache_fc_ramais', JSON.stringify(dadosRamais));
-            renderTable();
-            console.error("🚨 Detetada tentativa de apagar os dados! Sistema restaurado com config.js.");
-        }
-    }
-});

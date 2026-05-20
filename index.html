@@ -17,33 +17,16 @@
     </div>
 </div>
 
-<style>
-.scroll-container {
-    width: 100%;
-    overflow: hidden;
-    white-space: nowrap;
-}
-
-.scroll-text {
-    display: inline-block;
-    padding-left: 100%;
-    font-size: 18px;
-    text-transform: uppercase;
-    font-weight: 700;
-    animation: marquee-moderno 15s linear infinite;
-}
-
-@keyframes marquee-moderno {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-100%); }
-}
-</style>
     <div class="fixed-top-container">
         <div id="clima-container" class="weather-bar">
             <span id="weather-info">🌤️ Recife agora: Carregando...</span>
         </div>
         
         <header class="header-brand">
+                       <div style="margin-top: clamp(6px, 1.5vw, 12px); position: absolute; padding: clamp(6px, 1.5vw, 12px) 5px; font-size: clamp(9px, 1.2vw, 8px); left: clamp(5px, 10%, 10px); color: #ffffff; font-weight: 500; display: flex; align-items: center; gap: clamp(4px, 1vw, 8px); letter-spacing: 0.5px;">
+    📊 TOTAL DE RAMAIS: 
+    <span id="contador-ramais" style="background: #003399; color: #ffffff; padding: 3px clamp(6px, 1.5vw, 10px); border-radius: 50px; font-size: clamp(9px, 1.2vw, 10px); font-weight: 700; border: 1px solid #FFD400;">0</span>
+</div>
             <div class="brand-name">
                 <img src="https://d2urakutajlof6.cloudfront.net/logo/logo_fc.svg" alt="Ferreira Costa">
                 <span id="titletop">GUIA DE RAMAIS</span>
@@ -90,16 +73,17 @@
         </div>
     </nav>
 
+ 
+
     <main class="container">
         
+    
+            <input type="text" id="search" autocomplete="off" placeholder="Digite o nome, setor ou ramal para buscar...">
+        
+  
         <section id="view-consulta" class="view-section active">
-            <div style="padding: 12px 5px; font-size: 13px; color: #475569; font-weight: 700; display: flex; align-items: center; gap: 6px; letter-spacing: 0.5px;">
-                📊 TOTAL DE RAMAIS: <span id="contador-ramais" style="background: #003399; color: #ffffff; padding: 3px 10px; border-radius: 50px; font-size: 12px; font-weight: 800; border: 1px solid #FFD400;">0</span>
-            </div>
 
-            <div class="search-container">
-                <input type="text" id="search" placeholder="Pesquisar nome ou setor..." autocomplete="off">
-            </div>
+
             <div class="ramais-list">
                 <table class="table-ramais">
                     <tbody id="corpoTabela"></tbody>
@@ -120,7 +104,7 @@
             </div>
         </section>
 
-       <section id="view-form" class="view-section" style="display: none;">
+       <section id="view-form" class="view-section" style="display: none; background-color: #ffffff;">
             <div class="sticky-header-view" style="padding: 15px; border-bottom: 2px solid #FFD400; display: flex; align-items: center; gap: 15px;">
                 <button class="btn-back" onclick="switchView('consulta')" style="background:none; border:none; font-weight:800; color:#003399; cursor:pointer;">← CANCELAR</button>
                 <h2 id="titulo-form" style="margin:0; font-size:1.2rem; color:#003399;">➕ Novo Ramal</h2>
@@ -196,8 +180,6 @@
         </div>
     </aside>
 
-   
-    
     <script src="config.js?v=20260516"></script> 
     <script src="bus.js"></script>
     <script src="mediaplayer.js"></script>
